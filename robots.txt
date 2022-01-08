@@ -1,3 +1,3 @@
 User-agent: *
 Disallow: /images/
-Sitemap: https://github.com/HN410/sitemap.xml
+Sitemap: https://hn410.github.io/sitemap.xml
