@@ -65,20 +65,6 @@
 
   
   <url>
-    <loc>https://hn410.github.io/tags/%E5%A4%A7%E5%AD%A6/</loc>
-    <lastmod>2022-01-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://hn410.github.io/tags/CPU%E5%AE%9F%E9%A8%93/</loc>
-    <lastmod>2022-01-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://hn410.github.io/tags/GAN/</loc>
     <lastmod>2022-01-08</lastmod>
     <changefreq>weekly</changefreq>
@@ -87,6 +73,20 @@
   
   <url>
     <loc>https://hn410.github.io/tags/%E6%B7%B1%E5%B1%A4%E5%AD%A6%E7%BF%92/</loc>
+    <lastmod>2022-01-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://hn410.github.io/tags/%E5%A4%A7%E5%AD%A6/</loc>
+    <lastmod>2022-01-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://hn410.github.io/tags/CPU%E5%AE%9F%E9%A8%93/</loc>
     <lastmod>2022-01-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -109,14 +109,14 @@
 
   
   <url>
-    <loc>https://hn410.github.io/categories/%E5%A4%A7%E5%AD%A6/</loc>
+    <loc>https://hn410.github.io/categories/%E9%96%8B%E7%99%BA/</loc>
     <lastmod>2022-01-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://hn410.github.io/categories/%E9%96%8B%E7%99%BA/</loc>
+    <loc>https://hn410.github.io/categories/%E5%A4%A7%E5%AD%A6/</loc>
     <lastmod>2022-01-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
