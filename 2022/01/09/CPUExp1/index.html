@@ -14,7 +14,7 @@
 <meta property="og:description" content="私の所属する学科の名物実験であるCPU実験も大詰めに近づいてきたので，このあたりで途中経過を振り返ってみたいと思います． CPU実験についての説明は先輩方が丁寧に説明したくださっている記事があるのでそちらをご覧ください．「CPU実験」と検索すると沢山ヒットします． また，私の代でこの授業に大幅な変更がありました．詳しくはこちらをご覧ください．  9月後半 軽い予習 このあたりでどの係にするかの希望">
 <meta property="og:locale" content="ja_JP">
 <meta property="article:published_time" content="2022-01-08T15:00:00.000Z">
-<meta property="article:modified_time" content="2022-01-08T13:49:18.737Z">
+<meta property="article:modified_time" content="2022-01-08T14:08:58.844Z">
 <meta property="article:author" content="HN">
 <meta property="article:tag" content="大学">
 <meta property="article:tag" content="CPU実験">
@@ -233,16 +233,16 @@ CPU実験についての説明は先輩方が丁寧に説明したくださっ�
 <ul>
 <li>ブレークポイント機能</li>
 <li>命令の巻き戻し機能</li>
-<li>実行命令数などの統計情報表示<br>
-などが挙げられます．統計情報はデバッグにはあまり使いませんが，コンパイラやISAの改良を行う際に使われました．</li>
+<li>実行命令数などの統計情報表示</li>
 </ul>
+<p>などが挙げられます．統計情報はデバッグにはあまり使いませんが，コンパイラやISAの改良を行う際に使われました．</p>
 <p>アセンブラについては，コア係が作ってくれたものを互いに機能拡張するという形で開発しました．</p>
 <br>
 <h2 id="10月後半-GUIの作成-FPU-メモリの組み込み">10月後半 GUIの作成, FPU, メモリの組み込み</h2>
 <p>このあと，GUIの作成をした班があったので，対抗して(ほぼ自己満のために)GUIの作成にもとりかかりました．JavaでGUIを作ったことは何度かあったので，メインの処理は今まで作ったCLIのソフトにさせ，それとプロセス間通信をさせる形でJavaのGUIを作成しました．一応コア係には好評だったのでよかったですが，他の機能拡張を優先すべきだったかもしれません．</p>
-<p>また，このころFPUのVerilogでの実装が少しずつ上がっていたので，それをC++に落とし込む作業をしました．本来のハードウェア開発ではシミュレータが作成→それとまったく同じ挙動をするようにハードウェアを開発の順番なのですが，仕事の分担の関係上，FPUに関しては逆転してしまうのは仕方ない気がします．久しぶりのVerilogのコードに戸惑い，検証のコードにバグを仕込むというやらかしを行い，FPU係に迷惑をかけてしまいました(すみません)．<br>
-<span style="font-size: 200%">でも，これだけは言わせてください．C++のシフトの仕様は罠です<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>．</span><br>
-あとメモリの組み込みもこの頃行いました．</p>
+<p>また，このころFPUのVerilogでの実装が少しずつ上がっていたので，それをC++に落とし込む作業をしました．本来のハードウェア開発ではシミュレータが作成→それとまったく同じ挙動をするようにハードウェアを開発の順番なのですが，仕事の分担の関係上，FPUに関しては逆転してしまうのは仕方ない気がします．久しぶりのVerilogのコードに戸惑い，検証のコードにバグを仕込むというやらかしを行い，FPU係に迷惑をかけてしまいました(すみません)．</p>
+<p><span style="font-size: 200%">でも，これだけは言わせてください．C++のシフトの仕様は罠です<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>．</span></p>
+<p>あとメモリの組み込みもこの頃行いました．</p>
 <p>班の進捗としてはこの頃フィボナッチ数を計算できるコアはできていた気がします．</p>
 <br>
 <h2 id="11月-機能拡張，高速化，1stシミュレータの完成">11月 機能拡張，高速化，1stシミュレータの完成?</h2>
@@ -258,12 +258,12 @@ CPU実験についての説明は先輩方が丁寧に説明したくださっ�
 </li>
 <li>高速化
 <ul>
-<li>gprofでどこが時間かかっているかを調べられる<br>
-アセンブラを作ると同時にディスアセンブラを作っておけばアセンブラのデバッグをかなり効率化できたので，これについてはもっと早く作っておくべきだったなと思っています．</li>
+<li>gprofでどこが時間かかっているかを調べられる</li>
 </ul>
 </li>
 </ul>
-<p>以上とMMIOによる通信のシミュレータを追加して，1stコアのシミュレータを終えました．例年であればここで単位を確定できるのですが，今年からは速度予測が必須になるので，コアが完成させて速度予測に必要となるパラメータを収集できるまで単位はお預けです．</p>
+<p>アセンブラを作ると同時にディスアセンブラを作っておけばアセンブラのデバッグをかなり効率化できたので，これについてはもっと早く作っておくべきだったなと思っています．</p>
+<p>以上とMMIOによる通信とキャッシュのシミュレータを追加して，1stコアのシミュレータを終えました．例年であればここで単位を確定できるのですが，今年からは速度予測が必須になるので，コアが完成させて速度予測に必要となるパラメータを収集できるまで単位はお預けです．</p>
 <p>班の進捗としては，月の終わりにコンパイラ係がレイトレのプログラムをコンパイルでき，シミュレータ上で画像生成をすることができました(この際にシミュのバグをコンパイラ係に指摘してもらいました…申し訳ない)．</p>
 <br>
 執筆現在1月なので，12月の振り返りも書けるのですが，バランスを考えて全部終わったときに以降は書きたいと思います．
@@ -278,7 +278,7 @@ CPU実験についての説明は先輩方が丁寧に説明したくださっ�
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://hn410.github.io/blog/2022/01/09/CPUExp1/" data-id="cky5vwiy80008pkv71brb27e3" data-title="CPU実験の振り返り(シミュレータ係，前編)" class="article-share-link">共有</a>
+      <a data-url="https://hn410.github.io/blog/2022/01/09/CPUExp1/" data-id="cky5ytoew000558v7fmsk7xst" data-title="CPU実験の振り返り(シミュレータ係，前編)" class="article-share-link">共有</a>
       
       
       
@@ -289,6 +289,15 @@ CPU実験についての説明は先輩方が丁寧に説明したくださっ�
   
     
 <nav id="article-nav">
+  
+    <a href="/blog/2022/01/09/BrainF15/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">次の記事</strong>
+      <div class="article-nav-title">
+        
+          BrainF*ckで15パズル
+        
+      </div>
+    </a>
   
   
     <a href="/blog/2022/01/08/CPUExpChange/" id="article-nav-older" class="article-nav-link-wrap">
@@ -310,7 +319,7 @@ CPU実験についての説明は先輩方が丁寧に説明したくださっ�
   <div class="widget-wrap">
     <h3 class="widget-title">カテゴリ</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/blog/categories/%E5%A4%A7%E5%AD%A6/">大学</a></li><li class="category-list-item"><a class="category-list-link" href="/blog/categories/%E9%96%8B%E7%99%BA/">開発</a></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/blog/categories/%E5%A4%A7%E5%AD%A6/">大学</a></li><li class="category-list-item"><a class="category-list-link" href="/blog/categories/%E9%81%8A%E3%81%B3/">遊び</a></li><li class="category-list-item"><a class="category-list-link" href="/blog/categories/%E9%96%8B%E7%99%BA/">開発</a></li></ul>
     </div>
   </div>
 
@@ -320,7 +329,7 @@ CPU実験についての説明は先輩方が丁寧に説明したくださっ�
   <div class="widget-wrap">
     <h3 class="widget-title">タグ</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/CPU%E5%AE%9F%E9%A8%93/" rel="tag">CPU実験</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/GAN/" rel="tag">GAN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E5%A4%A7%E5%AD%A6/" rel="tag">大学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E6%B7%B1%E5%B1%A4%E5%AD%A6%E7%BF%92/" rel="tag">深層学習</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/BrainF-ck/" rel="tag">BrainF*ck</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/CPU%E5%AE%9F%E9%A8%93/" rel="tag">CPU実験</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/GAN/" rel="tag">GAN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E5%A4%A7%E5%AD%A6/" rel="tag">大学</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E6%B7%B1%E5%B1%A4%E5%AD%A6%E7%BF%92/" rel="tag">深層学習</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E9%81%8A%E3%81%B3/" rel="tag">遊び</a></li></ul>
     </div>
   </div>
 
@@ -330,7 +339,7 @@ CPU実験についての説明は先輩方が丁寧に説明したくださっ�
   <div class="widget-wrap">
     <h3 class="widget-title">タグクラウド</h3>
     <div class="widget tagcloud">
-      <a href="/blog/tags/CPU%E5%AE%9F%E9%A8%93/" style="font-size: 10px;">CPU実験</a> <a href="/blog/tags/GAN/" style="font-size: 10px;">GAN</a> <a href="/blog/tags/%E5%A4%A7%E5%AD%A6/" style="font-size: 10px;">大学</a> <a href="/blog/tags/%E6%B7%B1%E5%B1%A4%E5%AD%A6%E7%BF%92/" style="font-size: 10px;">深層学習</a>
+      <a href="/blog/tags/BrainF-ck/" style="font-size: 10px;">BrainF*ck</a> <a href="/blog/tags/CPU%E5%AE%9F%E9%A8%93/" style="font-size: 20px;">CPU実験</a> <a href="/blog/tags/GAN/" style="font-size: 20px;">GAN</a> <a href="/blog/tags/%E5%A4%A7%E5%AD%A6/" style="font-size: 20px;">大学</a> <a href="/blog/tags/%E6%B7%B1%E5%B1%A4%E5%AD%A6%E7%BF%92/" style="font-size: 20px;">深層学習</a> <a href="/blog/tags/%E9%81%8A%E3%81%B3/" style="font-size: 10px;">遊び</a>
     </div>
   </div>
 
@@ -350,6 +359,10 @@ CPU実験についての説明は先輩方が丁寧に説明したくださっ�
     <h3 class="widget-title">最近の投稿</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/blog/2022/01/09/BrainF15/">BrainF*ckで15パズル</a>
+          </li>
         
           <li>
             <a href="/blog/2022/01/09/CPUExp1/">CPU実験の振り返り(シミュレータ係，前編)</a>
