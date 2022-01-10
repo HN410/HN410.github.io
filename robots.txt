@@ -1,3 +1,2 @@
 User-agent: *
-Disallow: /images/
 Sitemap: https://hn410.github.io/sitemap.xml
