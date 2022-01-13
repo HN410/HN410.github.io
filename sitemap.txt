@@ -1,7 +1,7 @@
-https://hn410.github.io/
-https://hn410.github.io/2022/01/09/memo/TexLiveShellError/
-https://hn410.github.io/2022/01/09/univ/CPUExp1/
-https://hn410.github.io/2022/01/08/univ/CPUExpChange/
-https://hn410.github.io/2021/12/23/deepL/20211223/
-https://hn410.github.io/2022/01/09/play/BrainF15/
-https://hn410.github.io/2021/12/19/deepL/20211219/
+https://hn410.github.io/index.html
+https://hn410.github.io/2022/01/09/memo/TexLiveShellError/index.html
+https://hn410.github.io/2022/01/09/univ/CPUExp1/index.html
+https://hn410.github.io/2022/01/08/univ/CPUExpChange/index.html
+https://hn410.github.io/2021/12/23/deepL/20211223/index.html
+https://hn410.github.io/2022/01/09/play/BrainF15/index.html
+https://hn410.github.io/2021/12/19/deepL/20211219/index.html
