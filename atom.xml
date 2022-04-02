@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>HNのブログ</title>
+  
+  
+  <link href="https://hn410.github.io/atom.xml" rel="self"/>
+  
+  <link href="https://hn410.github.io/"/>
+  <updated>2022-03-26T14:53:16.128Z</updated>
+  <id>https://hn410.github.io/</id>
+  
+  <author>
+    <name>HN</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>自転車用経路探索ソフトを作ってみた</title>
+    <link href="https://hn410.github.io/2022/03/27/Python/RoutingForBicycle/"/>
+    <id>https://hn410.github.io/2022/03/27/Python/RoutingForBicycle/</id>
+    <published>2022-03-26T15:00:00.000Z</published>
+    <updated>2022-03-26T14:53:16.128Z</updated>
+    
+    <content type="html"><![CDATA[<p>突然ですが，下のAからBへの最適な経路はどのようなルートが考えられるでしょうか．<br><img src="/images/Python/RoutingForBicycle/map.png" width="60%"></p><span id="more"></span><p>最短経路を考えれば下のようになります．多くの経路探索サービスでもほぼ同様なルートが出るでしょう．<br><img src="/images/Python/RoutingForBicycle/route_s.png" width="60%"><br>しかし，このルートを自転車で走ろうとするとどうなるでしょう．国土地理院の<a href="https://maps.gsi.go.jp/">地理院地図</a>を見てみましょう．</p><img src="/images/Python/RoutingForBicycle/map_g.png" width="60%"><div style="text-align: center;font-size: 100%"> 出典：国土地理院ウェブサイト, 自分で作る色別標高図 </div> <p>実はこのあたり結構高低差が激しいです．しかもさっきのルートは尾根と谷を何度も横断するようなルートとなっており，自転車で通るにはとても厳しいルートとなっています（少なくとも貧弱な私には）．</p><p>そこで，なるべく傾斜をよけて目的地へ向かうようなルートを検索してくれるソフトウェアを作成しました．そのソフトウェアで出したルートが下のようになっております．地理院地図と見比べていただければ，うまく高低差の激しいルートを避けて最低限の上下で向かえるルートになっていると思います．<br><img src="/images/Python/RoutingForBicycle/route_g.png" width="60%"></p><!-- toc --><ul><li><a href="#%E4%BD%BF%E7%94%A8%E3%81%97%E3%81%9F%E3%83%A9%E3%82%A4%E3%83%96%E3%83%A9%E3%83%AA%E3%83%87%E3%83%BC%E3%82%BF">使用したライブラリ，データ</a></li><li><a href="#%E5%A4%A7%E3%81%BE%E3%81%8B%E3%81%AA%E6%96%B9%E9%87%9D">大まかな方針</a></li><li><a href="#%E6%84%9F%E6%83%B3">感想</a></li></ul><!-- tocstop --><br><h2><span id="使用したライブラリデータ">使用したライブラリ，データ</span></h2><p>OSMnxとFoliumというライブラリを使いました，前者はOpenStreatMapを利用して地理データの操作が行えるライブラリ，後者は地理データの可視化をするためのライブラリです．両者ともに少々インストールが特殊なので，利用する際は以下のサイト等を参考にしていただけるとよいと思います．<br><a href="https://ushitora.net/archives/2065">GeoPandasのインストールに失敗した場合の対処法（Fiona/GDALのエラー + Rtreeのインストール） | USHITORA Lab.</a></p><p>また，高低差のデータはOpenStreatMapには登録されていないようで，OSMnxでデータを得るにはGoogleMapsAPIを経由する必要があります．これを使うこともできなくはないのですが，今回の用途ではリクエスト数が膨大になり，とても私には払えない金額になりそうなのでこれは使えません．</p><p>しかしながら，国土地理院の<a href="https://fgd.gsi.go.jp/download/menu.php">基盤地図情報サービス</a>で細かな標高データを無料でダウンロードすることができます(登録必要，用途によって別途申請などが必要なので注意)．今回はこちらを使わせていただきます．</p><p>このような高品質なデータを無料で使わせていただけるのは学生には非常にありがたいサービスです．</p><h2><span id="大まかな方針">大まかな方針</span></h2><p>OSMnxに，<code>ox.shortest_path()</code>という，経路グラフ上の最短距離を探索する関数があります．このオプションで各辺のコストを指定することができます．そのため各辺に対して，距離，高低差，勾配の大きさ等に応じた独自のコストを作成して，それで最短経路探索をさせました．</p><h2><span id="感想">感想</span></h2><p>正直最終的に行っていることはそれほど難しいことではなく，一番難しかったのはどの方法で実現するかを考えるところでした．この方法ならここまでできるとわかってもその先の手段が実現的でなかったりその逆だったりというパターンをいくつか踏んで苦労しました．初めてGISデータを取り扱ったこともあり，慣れないデータ形式に少し手間取りましたが，何とか実用的なものを作れました．似たようなものを作りたいという方に，このような方法があるという参考になれば幸いです．<br>また，地理データを扱う際，表現が変わるとデータの整列順序が変わるのが非常に紛らわしかったです．北半球では各地点を直感的に行列上で表そうとすると，行番号が上がるにつれて低緯度方向に移動するので，この方向で表現されているデータと逆方向に整列されたデータがあり，それらを変換する必要があるので少々面倒でした．</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;突然ですが，下のAからBへの最適な経路はどのようなルートが考えられるでしょうか．&lt;br&gt;
+&lt;img src=&quot;/images/Python/RoutingForBicycle/map.png&quot; width=&quot;60%&quot;&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Python" scheme="https://hn410.github.io/categories/Python/"/>
+    
+    
+    <category term="Python" scheme="https://hn410.github.io/tags/Python/"/>
+    
+    <category term="GIS" scheme="https://hn410.github.io/tags/GIS/"/>
+    
+    <category term="OSMnx" scheme="https://hn410.github.io/tags/OSMnx/"/>
+    
+    <category term="Folium" scheme="https://hn410.github.io/tags/Folium/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>blenderで境界ぼかしをする</title>
+    <link href="https://hn410.github.io/2022/03/08/blender/BoundaryBlur/"/>
+    <id>https://hn410.github.io/2022/03/08/blender/BoundaryBlur/</id>
+    <published>2022-03-07T15:00:00.000Z</published>
+    <updated>2022-03-08T00:43:57.459Z</updated>
+    
+    <content type="html"><![CDATA[<p>境界ぼかしは割とメジャーな表現な気がするのにもかかわらず，調べてもやり方があまり出てこなかったので，コンポジットの方法をメモしておきます．Blenderのバージョンは2.93.3です．<br><img src="/images/Blender/BoundaryBlur/6.png" alt></p><span id="more"></span><!-- toc --><ul><li><a href="#%E7%9B%AE%E6%A8%99">目標</a></li><li><a href="#%E4%B8%8B%E6%BA%96%E5%82%99">下準備</a></li><li><a href="#%E3%82%B3%E3%83%B3%E3%83%9D%E3%82%B8%E3%83%83%E3%83%88">コンポジット</a></li><li><a href="#%E5%AE%8C%E6%88%90">完成</a></li></ul><!-- tocstop --><h2><span id="目標">目標</span></h2><p>以下のように，平面と球のオブジェクトを用意し，球のうち三次元的な距離が平面に近い部分だけぼかすような表現を目指します．イメージとしては球が平面から湧き出しているような感じですね．<br><img src="/images/Blender/BoundaryBlur/1.png" alt><br><br></p><h2><span id="下準備">下準備</span></h2><p>「Plane」，「Ball」の二つのビューレイヤーを作成し，前者では平面をレンダリング対象に，後者では球をレンダリング対象，平面をマスクの対象にします．以下の図のように設定すればOKです．<br><img src="/images/Blender/BoundaryBlur/2-1.png" alt><br><img src="/images/Blender/BoundaryBlur/2-2.png" alt><br><br></p><h2><span id="コンポジット">コンポジット</span></h2><p>下準備が済んだところで，コンポジットに入ります．コンポジットエディタを開き，ノードを使用するにチェック，そのあと，ノードを以下のようにつなぎます．<br><img src="/images/Blender/BoundaryBlur/3.png" alt><br>Planeのレンダリング結果にBallのそれがアルファオーバーされた，普通の結果が得られます．このBallの画像の下部分をぼかしていきます．</p><br><p>レンダーレイヤーの深度は各ピクセルにおける，カメラと対象物の距離を表していますので，この減算結果が小さいほど球と平面が近いことを表しています．そのためその減算結果が一定の範囲内にあるときのみ0より大きい結果を返すようなノードグループを作成します．</p><p>新しく適当なノードを追加し，それを選択したうえで追加→グループ→グループ作成でノードグループを作り，以下のように設計します．<br><img src="/images/Blender/BoundaryBlur/4.png" alt><br>これは，input1-input2の結果がthresholdより小さくかつ正であるときのみに出力から0以上の値をだし，そうでない時は0を出力するようなノードとなっております．また，後で調整を楽にするために，出力にmultiplierの値を掛けられるようにしております．</p><p>このノードグループができたら，右上にある曲がった矢印のボタンを押して親ノードツリーに移動し，再度以下のようにノードをつなぎます．<br><img src="/images/Blender/BoundaryBlur/5.png" alt><br>各値はプレビューを見ながら調整してください．ぼかしのXYを調整することでぼかしの効果が大きくなり，さっき作ったノードグループのthresholdを大きくするとぼかしの適用される範囲が広がります．</p><h2><span id="完成">完成</span></h2><p>これにより，めでたく目標としていた画像が合成できます．<br><img src="/images/Blender/BoundaryBlur/6.png" alt><br>やはりBlenderの表現力はなかなかですね．</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;境界ぼかしは割とメジャーな表現な気がするのにもかかわらず，調べてもやり方があまり出てこなかったので，コンポジットの方法をメモしておきます．Blenderのバージョンは2.93.3です．&lt;br&gt;
+&lt;img src=&quot;/images/Blender/BoundaryBlur/6.png&quot; alt=&quot;&quot;&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="Blender" scheme="https://hn410.github.io/categories/Blender/"/>
+    
+    
+    <category term="備忘録" scheme="https://hn410.github.io/tags/%E5%82%99%E5%BF%98%E9%8C%B2/"/>
+    
+    <category term="Blender" scheme="https://hn410.github.io/tags/Blender/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>CPU実験の振り返り(シミュレータ係，後編)</title>
+    <link href="https://hn410.github.io/2022/03/08/univ/CPUExp2/"/>
+    <id>https://hn410.github.io/2022/03/08/univ/CPUExp2/</id>
+    <published>2022-03-07T15:00:00.000Z</published>
+    <updated>2022-03-07T22:56:34.326Z</updated>
+    
+    <content type="html"><![CDATA[<p>最終発表からかなり遅れてしまいましたが，これ以上遅くなって記憶が風化しないうちにメモします．<br>前回の続きとして12月から書いていきます．前回の記事を読んでない方は<a href="/2022/01/09/univ/CPUExp1/">こちら</a>からどうぞ．</p><span id="more"></span><!-- toc --><ul><li><a href="#12%E6%9C%88-2nd%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%BF%E5%AE%8C%E6%88%90">12月 2ndシミュレータ完成</a></li><li><a href="#1%E6%9C%88-1st%E3%82%B7%E3%83%9F%E3%83%A5%E6%99%82%E9%96%93%E4%BA%88%E6%B8%AC%E5%AE%8C%E4%BA%861st%E3%82%B3%E3%82%A2%E5%AE%8C%E5%8B%95%E7%8F%AD%E5%85%A8%E5%93%A1%E5%8D%98%E4%BD%8D%E7%A2%BA%E5%AE%9A">1月 1stシミュ時間予測完了，1stコア完動，班全員単位確定</a></li><li><a href="#2%E6%9C%88-2nd%E3%82%B3%E3%83%B3%E3%83%91%E3%82%A4%E3%83%A9%E5%AE%8C%E6%88%902nd%E3%82%B3%E3%82%A2%E5%AE%8C%E5%8B%952nd%E3%82%B7%E3%83%9F%E3%83%A5%E6%99%82%E9%96%93%E4%BA%88%E6%B8%AC%E5%AE%8C%E4%BA%86">2月 2ndコンパイラ完成，2ndコア完動，2ndシミュ時間予測完了．</a></li><li><a href="#%E6%84%9F%E6%83%B3">感想</a></li></ul><!-- tocstop --><br><h2><span id="12月-2ndシミュレータ完成">12月 2ndシミュレータ完成</span></h2><p>コンパイラがとりあえず動き，コアも完成に近づいたところでISAの改善点が浮かび上がってきました．具体的には，</p><ul><li>シフトの即値命令，lui(addi命令1回で即値を埋められない桁に即値を埋める命令)がほしい<ul><li>アドレス等，桁の大きい即値を作ることが頻繁にあったため</li></ul></li><li>浮動小数点レジスタと整数レジスタの区別はないほうが良い<ul><li>浮動小数点の即値を入れるのが大変だったため</li></ul></li><li>ブランチの即値をより長くとれるように<ul><li>自班のISAでは簡単のため，4バイトアラインされた位置にしかメモリアクセスしないので2桁節約可能</li></ul></li></ul><p>などがあります．<br>この中でも特に効果の大きいlui命令は1stISAにも組み込み，残りは2ndISAとしてまとめて改善を行うことにしました．自班の1stISAではlui命令がないと32ビットの即値を作るのに最大で8命令(シフト命令とaddi命令の繰り返し)かかったのでluiは必須といっても過言ではありません．<br>以上，2ndの仕様が決まったので，シミュレータは先周りして2ndシミュレータを作成しました．</p><p>この時，1st, 2nd共通の機能拡張も行いましたが，今考えてみれば蛇足だったと思う機能もありました．レイトレのプログラムの実行に予想以上に時間がかかったので，統計情報などをとらないことで実行だけを高速に行える機能をこの頃実装しました．確かに早くはなったものの，シミュ係の私として後々頻繁にシミュレータを使うことになるのは速度予測をテストするためであり，これには細かな統計情報が必要だったので，私はこの機能をあまり使いませんでした．コア係やコンパイラ係は使ってくれるかもしれませんが，個人的にはあまり使えなかったなと思いましたので，高速化するとしたら別の手法がおすすめです．</p><p>また，この月の後半にはコア係がデバッグ地獄に巻き込まれていました．私はそれなりにフリーであったものの，直接助ける術はなかったのでまごついていました．とりあえずテストプログラムのアセンブリをできるだけ書いてほしいといわれたので，バグを見つけやすそうなプログラムをいろいろ書きました．コンパイラを経由すると思った通りのコードにならないので，直接アセンブリをスムーズに書ける能力もあるとよさそうです．<br><br></p><h2><span id="1月-1stシミュ時間予測完了1stコア完動班全員単位確定">1月 1stシミュ時間予測完了，1stコア完動，班全員単位確定</span></h2><p>短い冬休みの余韻に浸ってしばらくたつと，コア係からとりあえず画像は出力できたという報告が．<br><img src="/images/univ/CPUExp2/mistake1.png" width="50%"><br>……背景が赤いし，視点も違うし，なんか右上にヒストグラムみたいなのが出てるし…．とりあえず床の模様が出ていないので，「床がおかしければfloor関数を見直せ」という実用的な激うまギャグにに従うと…<br><img src="/images/univ/CPUExp2/mistake2.png" width="50%"><br>とりあえず進歩したものの，見慣れた画像とは程遠い…．全体が大きく異なるので，局所的な問題ではないだろうと推測を進め，「浮動小数点テーブルがおかしいのではないか」という意見が出ました．これを見直した結果…．<br><img src="/images/univ/CPUExp2/output.png" width="50%"><br><span style="font-size: 200%">感動しました！</span></p><p>実機の結果とシミュレータの結果もdifをとって差がないことを確認し，めでたく単位確定です．</p><p>…と言いたいところですが，シミュ係にはまだ時間予測が残っています．<br>あらかじめ作っておいたシミュレータの時間予測と実機の結果を比べると，速度競争で使うSLDファイルではギリギリ5%以内の精度で予測できたものの，実行時間が短いものほど誤差が大きくなっている模様．様々なファイルで実行時間の絶対誤差を調べたところ，定数分ずれているどころか，反比例するような傾向が見られました．実行時間が短くなるほど遅くなるような機構を様々考え，UART通信のキューが詰まっているのではないかと気づきます．今まではキューは詰まっていないという仮定をおいていたので，新たに近似的なキューを実装し，シミュレーションを行い，それも考慮に入れた時間予測を行った結果，ほとんどのSLDファイルで5%以内の時間予測ができました．<br>これにより単位が確定しました(速度予測で必要なSLDファイルだけ精度が高ければよかったのですが，この頃はそのことを知らなかったので，とりあえず精度を上げようと必死になっていました)．<br><br></p><h2><span id="2月-2ndコンパイラ完成2ndコア完動2ndシミュ時間予測完了">2月 2ndコンパイラ完成，2ndコア完動，2ndシミュ時間予測完了．</span></h2><p>試験が終わり，一段落したところで，2ndコンパイラ完了の知らせが届き，2ndコアの開発，デバッグが本格的になってきました．この時点で発表まで残り数日しかなかったため，時間予測のためにコアを待っている余裕はなく,私も急いでそれに取り組みます．</p><p>2ndコアも1st同様デバッグに悩まされ，前日は班員で徹夜をしてそれぞれの作業に取り組みました．今回はクラス全体で進捗が例年より遅れていたため，多くの班が発表会には2ndコアを間に合わせようと前日(当日)徹夜をしていました．私は朝6時まで時間予測の改善と発表資料作成に取り組んでいましたが，自班を含め徹夜をしていた班から完動報告が来なかったため，半分諦めて3時間程仮眠をとりました．起きてみると，私が寝た1時間後に2ndコアが完動したという報告がコア係から来ていました．徹夜をしていた中で2ndコアを完成させたのは彼だけだったので，彼の勝負強さ，根気強さには感服します．急いで時間予測に掛け，何とか発表会前に配布されていたSLDファイルすべてでの時間予測を行い，7~8割近くのファイルに対して5%以内の精度で時間予測ができたことを確認しました．<br>しかしながら，同時に最適化をしていたコンパイラ係から，最新の最適化を施したコードが動かないという報告が．おそらくシミュレータ，アセンブラのバグではないかと思われていましたが，複数ファイルで精度の高い予測をしなければならないと勘違いしていたため，時間予測の確認に追われてそちらの対応に間に合わず，最後の最適化は最終発表には組み込めませんでした．徹夜までしてもらったのに申し訳ないです…．</p><p>しかしながら，班員のファインプレーが重なり，8班中3位，実行時間42.3sを達成しました．今回はボードの性能低下，必須要件の増加などがあったため，もう少し遅い結果になってもおかしくないと思っていたので驚きました．やはり班員の皆さんは偉大です…．</p><br><h2><span id="感想">感想</span></h2><p>シミュレータ係としてCPU実験に参加してみた感想として，最初と最後に負担が大きいというのがまず挙がります．シミュレータはほかの係のデバッグツールになるため，できるだけ早く(そして速く)動くものを作らなければなりませんし，コアが動いてから時間予測の確認もあります．コアの完成がかなりギリギリになると予想されるため，シミュレータ係はコアが動く前にほぼ時間予測を完成させなければなりませんし，コアの完成から発表会までのわずかな時間で確認と微調整を終わらせなければなりません．逆にそれ以外は自分や班員の役に立ちそうなものを作ったり，班員のリクエストに答える以外は割とフリーになります．ただ，班員のリクエストにはなるべく早く答えられた方がいいので，全体的にフリーな時間が多いほうが向いているかもしれません（どの係にも言えることですが）．</p><p>また，ここまで大きなグループ開発も行ったことがなかったため，新鮮でしたし，最後の徹夜も含めてなんだかんだ楽しかったです．でもどうせなら地下でいろいろ取り組みたかったなあという思いもあります．今年は使えるようになるんでしょうかねえ…．</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;最終発表からかなり遅れてしまいましたが，これ以上遅くなって記憶が風化しないうちにメモします．&lt;br&gt;
+前回の続きとして12月から書いていきます．前回の記事を読んでない方は&lt;a href=&quot;/2022/01/09/univ/CPUExp1/&quot;&gt;こちら&lt;/a&gt;からどうぞ．&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="大学" scheme="https://hn410.github.io/categories/%E5%A4%A7%E5%AD%A6/"/>
+    
+    
+    <category term="大学" scheme="https://hn410.github.io/tags/%E5%A4%A7%E5%AD%A6/"/>
+    
+    <category term="CPU実験" scheme="https://hn410.github.io/tags/CPU%E5%AE%9F%E9%A8%93/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Google Search Consoleにサイトマップが登録できないときの対処(未解決)</title>
+    <link href="https://hn410.github.io/2022/01/10/memo/GoogleSearchConsoleError/"/>
+    <id>https://hn410.github.io/2022/01/10/memo/GoogleSearchConsoleError/</id>
+    <published>2022-01-09T15:00:00.000Z</published>
+    <updated>2022-01-10T02:06:14.805Z</updated>
+    
+    <content type="html"><![CDATA[<p>Github Pagesでブログを作った際，Googleの検索結果にヒットさせるには，Google Search Consoleにサイトを登録する必要があります．その際，サイトマップを作成して登録するのですが，それが認識されなかったのでメモしておきます．</p><p>Hexoでのサイトマップの作成，登録手順については以下のリンクなどをご覧ください．</p><p><a href="https://sakkuntyo.github.io/2020/01/30/hexo-generate-sitemap/">Hexoでsitemap.xmlを生成</a></p><span id="more"></span><!-- toc --><ul><li><a href="#%E7%8F%BE%E7%8A%B6">現状</a></li><li><a href="#%E5%AF%BE%E5%87%A6">対処</a><ul><li><a href="#%E5%88%A5%E3%81%AE%E3%83%A9%E3%82%A4%E3%83%96%E3%83%A9%E3%83%AA%E3%81%AB%E5%A4%89%E3%81%88%E3%81%A6%E3%81%BF%E3%82%8B">別のライブラリに変えてみる</a></li><li><a href="#%E5%88%A5%E3%81%AE%E5%BD%A2%E5%BC%8F%E3%81%A7%E4%BD%9C%E3%81%A3%E3%81%A6%E3%81%BF%E3%82%8B">別の形式で作ってみる</a></li><li><a href="#robotstxt%E3%81%AB%E4%B8%8D%E5%82%99%E3%81%8C%E3%81%AA%E3%81%84%E3%81%8B">robots.txtに不備がないか</a></li></ul></li><li><a href="#%E3%81%A8%E3%82%8A%E3%81%82%E3%81%88%E3%81%9A%E3%81%AE%E7%B5%90%E8%AB%96">とりあえずの結論</a></li></ul><!-- tocstop --><br><h2><span id="現状">現状</span></h2><p>このように「サイトマップを読み込めませんでした」とだけ表示され，どういう原因なのかが全くわかりません．<br><img src="/images/memo/gscError.png" alt><br>なお，サイトマップにはしっかりアクセスできます．<br><a href="/sitemap.xml">こちら</a></p><br><h2><span id="対処">対処</span></h2><h3><span id="別のライブラリに変えてみる">別のライブラリに変えてみる</span></h3><p>hexo-generator-sitemapでなく，上の記事でも紹介されている hexo-generator-seo-friendly-sitemapをインストールして，それで作成したsitemap.xmlを登録して見ても変化なし．この時作成されるpost-sitemap.xmlなどのサブセットも登録してみても変わらず．</p><br><h3><span id="別の形式で作ってみる">別の形式で作ってみる</span></h3><p>Google検索セントラルの<a href="https://developers.google.com/search/docs/advanced/sitemaps/build-sitemap?hl=ja">サイトマップの作成と送信</a>によると，サイトマップの形式としてxmlファイルの他にtxtファイルも認められるとのこと．<br>形式は至ってシンプルで以下のようにウェブページのURLを羅列するだけ．</p><br><p><code>https://hn410.github.io/ https://hn410.github.io/2022/01/09/memo/TexLiveShellError/ https://hn410.github.io/2022/01/09/univ/CPUExp1/ https://hn410.github.io/2022/01/08/univ/CPUExpChange/ https://hn410.github.io/2021/12/23/deepL/20211223/ https://hn410.github.io/2022/01/09/play/BrainF15/ https://hn410.github.io/2021/12/19/deepL/20211219/</code><br><br></p><p>とりあえずテストとしていくつかのウェブページを羅列したtxtファイルをアップロードし，それを登録…が，駄目っ!．変わらず…!</p><br><h3><span id="robotstxtに不備がないか">robots.txtに不備がないか</span></h3><p>とにかく，そもそもクローラが私のウェブページに到達していないことがなんとなく推測されます．<br>ということなので，robots.txtに不備がないことを確かめます．Search Consoleのヘルプに<a href="https://support.google.com/webmasters/answer/6062598?hl=ja">robots.txt テスターで robots.txt をテストする</a>というページがあり，そこからrobots.txtがGoogleのクローラをブロックする設定担っていないかを確かめられます．</p><p>これでGoogleのクローラがブロックされているかを確かめてみますが…全部OKでした．まあ，そうですよね….<br><br></p><h2><span id="とりあえずの結論">とりあえずの結論</span></h2><p><a href="https://support.google.com/webmasters/thread/16199657/sitemap%E3%81%8C%E3%80%8C%E3%82%B5%E3%82%A4%E3%83%88%E3%83%9E%E3%83%83%E3%83%97%E3%82%92%E8%AA%AD%E3%81%BF%E8%BE%BC%E3%82%81%E3%81%BE%E3%81%9B%E3%82%93%E3%81%A7%E3%81%97%E3%81%9F%E3%80%8D%E3%81%AE%E3%81%BE%E3%81%BE%E3%81%A7%E5%8F%8D%E6%98%A0%E3%81%95%E3%82%8C%E3%81%BE%E3%81%9B%E3%82%93?hl=ja">こちら</a>によると，どうやら日がたてば状況が改善されることもあるみたいなので，とりあえず待ってみます．それまでこの備忘録も検索結果に載らないままです(悲C)．</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;Github Pagesでブログを作った際，Googleの検索結果にヒットさせるには，Google Search Consoleにサイトを登録する必要があります．その際，サイトマップを作成して登録するのですが，それが認識されなかったのでメモしておきます．&lt;/p&gt;
+&lt;p&gt;Hexoでのサイトマップの作成，登録手順については以下のリンクなどをご覧ください．&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://sakkuntyo.github.io/2020/01/30/hexo-generate-sitemap/&quot;&gt;Hexoでsitemap.xmlを生成&lt;/a&gt;&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="備忘録" scheme="https://hn410.github.io/categories/%E5%82%99%E5%BF%98%E9%8C%B2/"/>
+    
+    
+    <category term="備忘録" scheme="https://hn410.github.io/tags/%E5%82%99%E5%BF%98%E9%8C%B2/"/>
+    
+    <category term="GithubPages" scheme="https://hn410.github.io/tags/GithubPages/"/>
+    
+    <category term="Google" scheme="https://hn410.github.io/tags/Google/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Tex Live Shellが落ちる, tlmgr install ができないときの対処</title>
+    <link href="https://hn410.github.io/2022/01/09/memo/TexLiveShellError/"/>
+    <id>https://hn410.github.io/2022/01/09/memo/TexLiveShellError/</id>
+    <published>2022-01-08T15:00:00.000Z</published>
+    <updated>2022-01-09T06:35:13.599Z</updated>
+    
+    <content type="html"><![CDATA[<p>部誌を作る際にはまったのでメモ．</p><p>Texを最小限の構成でインストールした場合，コンパイル時に<code>! LaTeX Error: File [ファイル名] not found.</code>のエラーが出たときはその都度必要なライブラリをTex Live Shellやtlmgrからインストールする必要があります．</p><p>Tex Live Shellを起動し，何らかの操作をすると<code>Back end gone. Last command: ...</code>というエラーを出して落ちました．これの対処法を記します．</p><span id="more"></span><h2><span id="対処">対処</span></h2><p>セキュリティソフトのウェブ保護の設定を一時的に切れば正常に動作します．</p><p>…まあ，言われてみれば基本的な対処ですが，最近セキュリティソフトの質も上がったせいか，すぐにはこの操作をしようと思えないんですよね．</p><p>なお，<code>tlmgr install [ファイル名]</code>の実行時に<code>TLPDB::from_file could not initialize from: [インストール先のURL] </code>と出る時もこれで解決することがあります．これで解決しなかったらそのURLがまだ生きているかを確かめましょう．</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;部誌を作る際にはまったのでメモ．&lt;/p&gt;
+&lt;p&gt;Texを最小限の構成でインストールした場合，コンパイル時に&lt;code&gt;! LaTeX Error: File [ファイル名] not found.&lt;/code&gt;のエラーが出たときはその都度必要なライブラリをTex Live Shellやtlmgrからインストールする必要があります．&lt;/p&gt;
+&lt;p&gt;Tex Live Shellを起動し，何らかの操作をすると&lt;code&gt;Back end gone. Last command: ...&lt;/code&gt;というエラーを出して落ちました．これの対処法を記します．&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="備忘録" scheme="https://hn410.github.io/categories/%E5%82%99%E5%BF%98%E9%8C%B2/"/>
+    
+    
+    <category term="備忘録" scheme="https://hn410.github.io/tags/%E5%82%99%E5%BF%98%E9%8C%B2/"/>
+    
+    <category term="Tex" scheme="https://hn410.github.io/tags/Tex/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>CPU実験の振り返り(シミュレータ係，前編)</title>
+    <link href="https://hn410.github.io/2022/01/09/univ/CPUExp1/"/>
+    <id>https://hn410.github.io/2022/01/09/univ/CPUExp1/</id>
+    <published>2022-01-08T15:00:00.000Z</published>
+    <updated>2022-01-09T06:33:56.688Z</updated>
+    
+    <content type="html"><![CDATA[<p>私の所属する学科の名物実験であるCPU実験も大詰めに近づいてきたので，このあたりで途中経過を振り返ってみたいと思います．<br>CPU実験についての説明は先輩方が丁寧に説明したくださっている記事があるのでそちらをご覧ください．「CPU実験」と検索すると沢山ヒットします．<br>また，私の代でこの授業に大幅な変更がありました．詳しくは<a href="/2022/01/08/univ/CPUExpChange/">こちら</a>をご覧ください．</p><span id="more"></span><!-- toc --><ul><li><a href="#9%E6%9C%88%E5%BE%8C%E5%8D%8A-%E8%BB%BD%E3%81%84%E4%BA%88%E7%BF%92">9月後半 軽い予習</a></li><li><a href="#10%E6%9C%88%E5%89%8D%E5%8D%8A-%E9%A1%94%E5%90%88%E3%82%8F%E3%81%9B%E5%88%9D%E6%9C%9Fisa%E6%B1%BA%E5%AE%9Afib%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%BF%E4%BD%9C%E6%88%90%E3%81%AA%E3%81%A9">10月前半 顔合わせ，初期ISA決定，Fibシミュレータ作成など</a></li><li><a href="#10%E6%9C%88%E5%BE%8C%E5%8D%8A-gui%E3%81%AE%E4%BD%9C%E6%88%90-fpu-%E3%83%A1%E3%83%A2%E3%83%AA%E3%81%AE%E7%B5%84%E3%81%BF%E8%BE%BC%E3%81%BF">10月後半 GUIの作成, FPU, メモリの組み込み</a></li><li><a href="#11%E6%9C%88-%E6%A9%9F%E8%83%BD%E6%8B%A1%E5%BC%B5%E9%AB%98%E9%80%9F%E5%8C%961st%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%BF%E3%81%AE%E5%AE%8C%E6%88%90">11月 機能拡張，高速化，1stシミュレータの完成?</a></li></ul><!-- tocstop --><br><h2><span id="9月後半-軽い予習">9月後半 軽い予習</span></h2><p>このあたりでどの係にするかの希望を出します．先輩のブログや説明資料から考えて，私はシミュレータ係を希望し，そのまま通りました．コンパイラ係の希望が少し多かったので，一部の人がコア，FPU係に移動していました．</p><p>係も決まり，特にすることもなかったので軽く予習をしておくことにしました．CPU実験のシミュレータは他の係がデバッグに用いるため，なるべく高速に動作することが求められます．そのため，CやC++のような高速な言語で開発するほうが好ましいです．また，班員がコードを確認したり，改造を加えたりすることもあるので，班員も扱える言語のほうがよいです．Cは必修だったので全員使えますが，あまりにもライブラリが乏しいため，C++を使うことにしました．私はJavaをよく使っていたのでこれの履修には特に苦労しませんでした．</p><br><h2><span id="10月前半-顔合わせ初期isa決定fibシミュレータ作成など">10月前半 顔合わせ，初期ISA決定，Fibシミュレータ作成など</span></h2><p>10月になって班の割り振りが決定され，ここから進捗発表会が始まります．<br>最初の1週間でISAとしてRISC-Vのサブセットを使うことを決定しました．大体の班が同様な決定をしていましたが，配布されるコンパイラがデフォルトでPowerPCのアセンブリを出力できることからそれをISAとして使った班もありました．</p><p>ここからまずはフィボナッチ数を計算できるコアの作成を目指します．<br>シミュレータ係としてはいかに早くシミュレータを作成して班員が使えるようにするかが重要だと思ったので，ISAの決定の数日後にはアセンブリの書式の決定とそのインタプリタの作成を終えました．この後必要そうな機能を追加していきます．例えば，</p><ul><li>ブレークポイント機能</li><li>命令の巻き戻し機能</li><li>実行命令数などの統計情報表示</li></ul><p>などが挙げられます．統計情報はデバッグにはあまり使いませんが，コンパイラやISAの改良を行う際に使われました．</p><p>アセンブラについては，コア係が作ってくれたものを互いに機能拡張するという形で開発しました．</p><br><h2><span id="10月後半-guiの作成-fpu-メモリの組み込み">10月後半 GUIの作成, FPU, メモリの組み込み</span></h2><p>このあと，GUIの作成をした班があったので，対抗して(ほぼ自己満のために)GUIの作成にもとりかかりました．JavaでGUIを作ったことは何度かあったので，メインの処理は今まで作ったCLIのソフトにさせ，それとプロセス間通信をさせる形でJavaのGUIを作成しました．一応コア係には好評だったのでよかったですが，他の機能拡張を優先すべきだったかもしれません．</p><p>また，このころFPUのVerilogでの実装が少しずつ上がっていたので，それをC++に落とし込む作業をしました．本来のハードウェア開発ではシミュレータが作成→それとまったく同じ挙動をするようにハードウェアを開発の順番なのですが，仕事の分担の関係上，FPUに関しては逆転してしまうのは仕方ない気がします．久しぶりのVerilogのコードに戸惑い，検証のコードにバグを仕込むというやらかしを行い，FPU係に迷惑をかけてしまいました(すみません)．</p><p><span style="font-size: 200%">でも，これだけは言わせてください．C++のシフトの仕様は罠です<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>．</span></p><p>あとメモリの組み込みもこの頃行いました．</p><p>班の進捗としてはこの頃フィボナッチ数を計算できるコアはできていた気がします．</p><br><h2><span id="11月-機能拡張高速化1stシミュレータの完成">11月 機能拡張，高速化，1stシミュレータの完成?</span></h2><p>以降，FPUが作ってくれたコードをC++に落とし込みながら機能拡張を続けました．この頃行ったものの例としては，</p><ul><li>エントリポイントへの対応</li><li>ディスアセンブラの作成</li><li>ワードデータを以下の表記で相互変換できるツールの作成<ul><li>符号有無と2・10・16進法の変換</li><li>メモリの実装と同じエンディアンでエンコードしたときの4バイト</li></ul></li><li>高速化<ul><li>gprofでどこが時間かかっているかを調べられる</li></ul></li></ul><p>アセンブラを作ると同時にディスアセンブラを作っておけばアセンブラのデバッグをかなり効率化できたので，これについてはもっと早く作っておくべきだったなと思っています．</p><p>以上とMMIOによる通信とキャッシュのシミュレータを追加して，1stコアのシミュレータを終えました．例年であればここで単位を確定できるのですが，今年からは速度予測が必須になるので，コアが完成させて速度予測に必要となるパラメータを収集できるまで単位はお預けです．</p><p>班の進捗としては，月の終わりにコンパイラ係がレイトレのプログラムをコンパイルでき，シミュレータ上で画像生成をすることができました(この際にシミュのバグをコンパイラ係に指摘してもらいました…申し訳ない)．</p><br>執筆現在1月なので，12月の振り返りも書けるのですが，バランスを考えて全部終わったときに以降は書きたいと思います．<hr class="footnotes-sep"><section class="footnotes"><ol class="footnotes-list"><li id="fn1" class="footnote-item"><p>論理シフト，算術シフトの区別がない．ビット幅以上のシフトが未定義． <a href="#fnref1" class="footnote-backref">↩︎</a></p></li></ol></section>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;私の所属する学科の名物実験であるCPU実験も大詰めに近づいてきたので，このあたりで途中経過を振り返ってみたいと思います．&lt;br&gt;
+CPU実験についての説明は先輩方が丁寧に説明したくださっている記事があるのでそちらをご覧ください．「CPU実験」と検索すると沢山ヒットします．&lt;br&gt;
+また，私の代でこの授業に大幅な変更がありました．詳しくは&lt;a href=&quot;/2022/01/08/univ/CPUExpChange/&quot;&gt;こちら&lt;/a&gt;をご覧ください．&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="大学" scheme="https://hn410.github.io/categories/%E5%A4%A7%E5%AD%A6/"/>
+    
+    
+    <category term="大学" scheme="https://hn410.github.io/tags/%E5%A4%A7%E5%AD%A6/"/>
+    
+    <category term="CPU実験" scheme="https://hn410.github.io/tags/CPU%E5%AE%9F%E9%A8%93/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>BrainF*ckで15パズル</title>
+    <link href="https://hn410.github.io/2022/01/09/play/BrainF15/"/>
+    <id>https://hn410.github.io/2022/01/09/play/BrainF15/</id>
+    <published>2022-01-08T15:00:00.000Z</published>
+    <updated>2022-01-09T06:28:53.770Z</updated>
+    
+    <content type="html"><![CDATA[<p>折角ブログをつくったので，部誌で書いた記事を少し改変してここで再掲したいと思います．</p><p>プログラミングを学び始めたときに初心者用の言語としてBrainF*ckが紹介されていたので，それで作った15パズルを紹介します．この言語についてはネットに沢山解説記事が上がっているのでそちらを参照ください．</p><span id="more"></span><!-- toc --><ul><li><a href="#%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0">プログラム</a></li><li><a href="#%E6%A6%82%E8%A6%81">概要</a></li><li><a href="#%E3%83%A1%E3%83%A2%E3%83%AA%E3%81%AE%E5%89%B2%E3%82%8A%E6%8C%AF%E3%82%8A">メモリの割り振り</a></li><li><a href="#%E5%88%9D%E6%9C%9F%E8%A8%AD%E5%AE%9A">初期設定</a></li><li><a href="#%E5%85%A5%E5%8A%9B%E3%82%AD%E3%83%BC%E3%81%AE%E5%88%A4%E5%AE%9A-%E7%A7%BB%E5%8B%95%E5%87%A6%E7%90%86">入力キーの判定、移動処理</a></li><li><a href="#%E6%8F%8F%E7%94%BB">描画</a></li><li><a href="#%E3%81%BE%E3%81%A8%E3%82%81">まとめ</a></li></ul><!-- tocstop --><br><h2><span id="プログラム">プログラム</span></h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"> ※po=xはポインタの位置がｘ番メモリにあるの意味。最初のメモリは１番メモリとする。</span><br><span class="line"> 指定されたメモリにパズルの番号＋６６を入力。改行の箇所には１０、空白は０、その他は１</span><br><span class="line">+&gt;+&gt;+&gt;+&gt;++++[&gt;++++&lt;-]+&gt;  po=6</span><br><span class="line">[&gt;++++&gt;++++&gt;++++&gt;++++&gt;+&gt;</span><br><span class="line">&gt;++++&gt;++++&gt;++++&gt;++++&gt;+&gt;</span><br><span class="line">&gt;++++&gt;++++&gt;++++&gt;++++&gt;+&gt;</span><br><span class="line">&gt;++++&gt;++++&gt;++++&gt;&gt;+  po=29</span><br><span class="line">&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;-]+　po=6</span><br><span class="line">&gt;+++&gt;++++&gt;+++++&gt;++++++ </span><br><span class="line">&gt;------&gt;+&gt;+++++++&gt;++++++++&gt;+++++++++&gt;++++++++++ </span><br><span class="line">&gt;------&gt;+&gt;+++++++++++&gt;++++++++++++&gt;+++++++++++++&gt;++++++++++++++</span><br><span class="line">&gt;------&gt;+&gt;+++++++++++++++&gt;++++++++++++++++&gt;+++++++++++++++++  </span><br><span class="line">&gt;&gt;------&gt;+&gt;+&gt;+&gt;+&gt;+&gt;  </span><br><span class="line"> ここまで初期設定　po=35</span><br><span class="line"></span><br><span class="line"> 以下ループ</span><br><span class="line"> ※一旦１を代入しておいてループの部分が飛ばされてしまうのを防ぐ</span><br><span class="line">+[-</span><br><span class="line">　　</span><br><span class="line"> ここから描画処理</span><br><span class="line"> マスの先頭へ</span><br><span class="line">&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;  po=7</span><br><span class="line"> 全体にー２して出力させることで、空白のメモリをー２＝１２６にし、チルダを出力させる。</span><br><span class="line">--.++&gt;--.++&gt;--.++&gt;--.++&gt;.&gt;&gt;</span><br><span class="line">--.++&gt;--.++&gt;--.++&gt;--.++&gt;.&gt;&gt;</span><br><span class="line">--.++&gt;--.++&gt;--.++&gt;--.++&gt;.&gt;&gt;</span><br><span class="line">--.++&gt;--.++&gt;--.++&gt;--.++&gt;.&gt;&gt; po=31</span><br><span class="line">&gt;&gt;&gt;&gt; po=35</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> 以上。入力へ</span><br><span class="line">,</span><br><span class="line"> 読み込んだ値を３６、３８、４０、４２にコピー　 </span><br><span class="line">[-&gt;+&gt;&gt;+&gt;&gt;+&gt;&gt;+&lt;&lt;&lt;&lt;&lt;&lt;&lt;]　 po=35</span><br><span class="line"></span><br><span class="line"> 入力がAかどうかの判定</span><br><span class="line">　&gt;&gt;++++++++++++[-&lt;--------&gt;]&lt;-３６の値から９７を引く、po=36</span><br><span class="line">　&gt;+&lt;[&gt;-&lt;[-]]&gt;[</span><br><span class="line">　 Aならここを実行、あとは飛ばす　po=37</span><br><span class="line">     ３８、４０、４２に十分大きな値を入れて負になるのを防ぐ。</span><br><span class="line">　　&gt;&gt;+++++[&lt;+++++&gt;-]</span><br><span class="line">  　&gt;&gt;+++++[&lt;+++++&gt;-]</span><br><span class="line">  　&gt;&gt;+++++[&lt;+++++&gt;-]  po=43</span><br><span class="line">    &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt; po=33      </span><br><span class="line">　　[&lt;]　パズルの空白の位置まで移動</span><br><span class="line">　　&lt;-[　空白の左隣が１じゃないならここを実行</span><br><span class="line">　　　　[&gt;+&lt;-]&gt;+&lt;]　左隣の値を空白に移動</span><br><span class="line">　　+&gt;[&lt;-]&gt;&gt;&gt;[&gt;]　　もし空白だったところの左隣が１だったら、現在０になっているので、そのときのみ１を足して元に戻す po=35</span><br><span class="line">  　&gt;&gt;-]   　　　　３７番を０にする　</span><br><span class="line"></span><br><span class="line"> 以上、Aの判定</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"> Dの判定</span><br><span class="line">  &gt;&gt;++++++++++[-&lt;----------&gt;]&lt;   po=38 </span><br><span class="line">  &gt;+&lt;[&gt;-&lt;[-]]&gt;[  po=39</span><br><span class="line">    &gt;&gt;+++++[&lt;+++++&gt;-]  po=41 &gt;&gt;+++++[&lt;+++++&gt;-]  po=43 &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;[&lt;]</span><br><span class="line">    &gt;----------[</span><br><span class="line">      [&lt;+&gt;-]&lt;++++++++++&gt;]</span><br><span class="line">    ++++++++++&lt;[&gt;----------]&gt;&gt;[&gt;]</span><br><span class="line">    &gt;&gt;&gt;&gt;-]   if po 38 = d  now po=39</span><br><span class="line"></span><br><span class="line"> Sの判定</span><br><span class="line">  &gt;&gt;+++++++++++[-&lt;----------&gt;]&lt;-----  po=40 minus115</span><br><span class="line">  &gt;+&lt;[&gt;-&lt;[-]]&gt;[  po=41</span><br><span class="line">    &gt;+++++&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;[&lt;]</span><br><span class="line">    &gt;&gt;&gt;&gt;&gt;&gt;-[</span><br><span class="line">      [&lt;&lt;&lt;&lt;&lt;&lt;+&gt;&gt;&gt;&gt;&gt;&gt;-]&lt;&lt;&lt;&lt;&lt;&lt;+&gt;&gt;&gt;&gt;&gt;&gt;]</span><br><span class="line">    +&lt;&lt;&lt;&lt;&lt;&lt;[&gt;&gt;&gt;&gt;&gt;&gt;-]&gt;[&gt;]</span><br><span class="line">    &gt;&gt;&gt;&gt;&gt;&gt;-]     if po 40 = s now po=41</span><br><span class="line"></span><br><span class="line"> Wの判定</span><br><span class="line">  &gt;&gt;+++++++++++[-&lt;----------&gt;]&lt;---------   po=42 minus119</span><br><span class="line">  &gt;+&lt;[&gt;-&lt;[-]]&gt;[    po=43</span><br><span class="line">    &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;[&lt;]</span><br><span class="line">    &lt;&lt;&lt;&lt;&lt;&lt;-[</span><br><span class="line">      [&gt;&gt;&gt;&gt;&gt;&gt;+&lt;&lt;&lt;&lt;&lt;&lt;-]&gt;&gt;&gt;&gt;&gt;&gt;+&lt;&lt;&lt;&lt;&lt;&lt;]</span><br><span class="line">    +&gt;&gt;&gt;&gt;&gt;&gt;[&lt;&lt;&lt;&lt;&lt;&lt;-]&gt;[&gt;]</span><br><span class="line">    &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;-]    if po 42 = w now po=43</span><br><span class="line"></span><br><span class="line">&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt; po=35</span><br><span class="line"> 出入力へループ</span><br><span class="line">+]</span><br><span class="line"></span><br></pre></td></tr></table></figure><br><h2><span id="概要">概要</span></h2><p>A～Nはそれぞれ１～１５に対応し、?が空白となっております。操作はBrainF<em>ckの入力パネルにw(半角)を入力することで空白に対応する部分が上に、a,s,dも同様にそれぞれ左、下、右に動きます。<br>BrainF</em>ck製である以上、以下の欠陥があります。</p><ul><li>シャッフル機能がないです。なんか適当に文字入力してもらうのも考えましたが、面d(ry</li><li>インタプリタによっては、入力してもまた入力ウィンドウがでる無限ループに入ります。</li></ul><br><h2><span id="メモリの割り振り">メモリの割り振り</span></h2><p>使用したメモリの数は４３です。下に主な用途を書きますが、この言語の特性上このほかにメモリをいろいろ使いまわします．例えば３５、３６はパズルの描画のために「６３」を一時的に作るために使われます。</p><table><thead><tr><th style="text-align:right">メモリの位置</th><th style="text-align:center">主な用途</th><th style="text-align:center">備考</th></tr></thead><tbody><tr><td style="text-align:right">１～３４</td><td style="text-align:center">パズルのマスに対応</td><td style="text-align:center">なぜ３４マスもあるかは後述</td></tr><tr><td style="text-align:right">３５</td><td style="text-align:center">キーの入力値を一時格納</td><td style="text-align:center">すぐに３６,３８,４０,４２にコピー</td></tr><tr><td style="text-align:right">３６,３７</td><td style="text-align:center">Aが入力された時の判定</td><td style="text-align:center">以下、４２,４３までそれぞれD,S,Wに対応</td></tr></tbody></table><br><h2><span id="初期設定">初期設定</span></h2><p>まず、マスの状況を保存する部分をはじめに１５パズルの揃った状況に設定します。ここで、本来の１６マスよりも大幅に多い３４個のメモリを使う理由ですが、下のように４×４のマスを６×６に拡張したためです（いわゆる番兵の設置）。<br><img src="/images/BrainF15/table.png" alt><br>このようにメモリを拡張することで、実際に用いる真ん中の１６個のメモリのある場所からの上下左右が常に±１、６になります。このとき、パズルに対応する１６個のメモリのうち、数字に対応する部分はその値＋１を、空白の部分は０を格納します。周囲のメモリは１を入力しておきます。空白に対応する部分を０にすることで、‘’]''の命令で０か正かしか判定できないこの言語で後で参照しやすくします。</p><br><h2><span id="入力キーの判定-移動処理">入力キーの判定、移動処理</span></h2><p>この後、入力待ちの状態にし、３５番メモリにそれを8ビットの整数で代入させ、それを４箇所にコピーします（コピー元は消えちゃいます）。入力が予想される値はa(９７),d(１００),s(１１５),w(１１９)　{括弧内は文字コードの１０進数値}で、まず文字コードの値が若い順に処理します。コピーした値のうち１つから９７を引き、０になるかを判定します。（この判定の書き方は<a href="https://yryr.me/no-category/brainfuck-condition-formula.html">こちら</a>をパクらせていただきました。）もし０ならさっきコピーした残りの値に十分大きな値を足しておいて（別の値の判定で９７より大きい値を引いて負にさせないため）、パズルの移動にかかります。といっても１～３４のメモリの中で０になっている値とその左隣の値を交換するだけなので単純です。ただし、空白の左隣がパズルの４×４マスの外（つまり値が１）なら、その移動は実行しません。</p><p>この処理をd,s,wでも行います。</p><br><h2><span id="描画">描画</span></h2><p>移動処理が終われば描画するだけですが、これはマスの状態が記録されてるメモリに６３を足して出力する(Aの文字コードの値は６５)だけなので大したことないです。３５、３６番メモリ（このとき、値は常に０です）に６３をあらかじめ作っておき、一気に該当のメモリに足したあと順に出力します。このとき、パズルの４*４のマスの右の外にある列に対応するメモリの値は１０にして改行を出力させます。</p><p>あとはメモリの値を元に戻してループさせるだけです。</p><br><h2><span id="まとめ">まとめ</span></h2><p>今思うとよくこんな面倒なものを作ったなあと思いました。この時期にNP性の証明とか書かせてたらチューリングマシンの動作をきちんと書いてたかもしれません。</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;折角ブログをつくったので，部誌で書いた記事を少し改変してここで再掲したいと思います．&lt;/p&gt;
+&lt;p&gt;プログラミングを学び始めたときに初心者用の言語としてBrainF*ckが紹介されていたので，それで作った15パズルを紹介します．この言語についてはネットに沢山解説記事が上がっているのでそちらを参照ください．&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="遊び" scheme="https://hn410.github.io/categories/%E9%81%8A%E3%81%B3/"/>
+    
+    
+    <category term="遊び" scheme="https://hn410.github.io/tags/%E9%81%8A%E3%81%B3/"/>
+    
+    <category term="BrainF*ck" scheme="https://hn410.github.io/tags/BrainF-ck/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>CPU実験の変更点(暫定)</title>
+    <link href="https://hn410.github.io/2022/01/08/univ/CPUExpChange/"/>
+    <id>https://hn410.github.io/2022/01/08/univ/CPUExpChange/</id>
+    <published>2022-01-07T15:00:00.000Z</published>
+    <updated>2022-01-09T06:32:11.310Z</updated>
+    
+    <content type="html"><![CDATA[<p>あけましておめでとうございます．<br>この記事にアクセスしてくださった方はご存じかもしれませんが，東京大学理学部情報科学科ではCPU実験という名物授業があります．どんな授業かというと，班員で役割分担をし，mincamlという言語で書かれたプログラムを動かすデバイスをFPGA<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>で1から作るという授業です．詳しい概要については先輩方が書いたブログなどにも書かれているのでそちらをご覧ください．</p><p>しかしながら，担当教員の変更と去年に引き続いて例のウイルスの影響を受け，今年から大幅に内容が変更されました．<br>これが永続的なものかはわかりませんが，記録として残しておきたいと思います．もし，後輩の方が私より前の世代の方のブログを見る際に参考にしていただければと思います．</p><span id="more"></span><!-- toc --><ul><li><a href="#%E5%85%A8%E8%88%AC">全般</a><ul><li><a href="#%E6%8E%88%E6%A5%AD%E3%81%8C%E5%AF%BE%E9%9D%A2%E3%82%AA%E3%83%B3%E3%83%A9%E3%82%A4%E3%83%B3%E3%81%A8%E5%AF%BE%E9%9D%A2%E3%81%AE%E3%83%8F%E3%82%A4%E3%83%96%E3%83%AA%E3%83%83%E3%83%89%E5%9E%8B%E3%81%B8">授業が対面→オンラインと対面のハイブリッド型へ</a></li><li><a href="#%E5%9C%B0%E4%B8%8B%E3%81%8C%E5%88%A9%E7%94%A8%E4%B8%8D%E5%8F%AF%E8%83%BD%E3%81%AB">(地下が利用不可能に)</a></li></ul></li><li><a href="#%E3%83%8F%E3%83%BC%E3%83%89%E3%82%A6%E3%82%A7%E3%82%A2">ハードウェア</a><ul><li><a href="#%E9%85%8D%E5%B8%83%E3%81%95%E3%82%8C%E3%82%8Bfpga%E3%83%9C%E3%83%BC%E3%83%89%E3%81%AE%E6%80%A7%E8%83%BD%E3%81%8C%E4%BD%8E%E4%B8%8B">配布されるFPGAボードの性能が低下</a></li><li><a href="#ddr2%E3%83%A1%E3%83%A2%E3%83%AA%E3%81%AE%E4%BD%BF%E7%94%A8%E3%81%8C%E6%80%A7%E8%83%BD%E7%9A%84%E3%81%AB%E3%81%BB%E3%81%BC%E5%BF%85%E9%A0%88%E3%81%AB">DDR2メモリの使用が性能的にほぼ必須に</a></li></ul></li><li><a href="#%E5%8D%98%E4%BD%8D%E8%A6%81%E4%BB%B6">単位要件</a><ul><li><a href="#%E3%82%B3%E3%83%B3%E3%83%91%E3%82%A4%E3%83%A9%E5%AE%9F%E9%A8%93%E3%81%AE%E8%AA%B2%E9%A1%8C%E3%81%AE%E5%89%B2%E3%82%8A%E6%8C%AF%E3%82%8A%E3%81%AE%E5%A4%89%E6%9B%B4">コンパイラ実験の課題の割り振りの変更</a></li><li><a href="#fpu%E4%BF%82%E3%81%8Cfpu%E3%83%A1%E3%83%A2%E3%83%AA%E4%BF%82%E3%81%AB%E5%A4%89%E6%9B%B4">FPU係がFPU・メモリ係に変更</a></li><li><a href="#%E3%82%AD%E3%83%A3%E3%83%83%E3%82%B7%E3%83%A5%E3%81%AE%E9%96%8B%E7%99%BA%E3%81%8C%E5%BF%85%E9%A0%88%E3%81%AB">キャッシュの開発が必須に</a></li><li><a href="#%E3%82%B7%E3%83%9F%E3%83%A5%E3%83%AC%E3%83%BC%E3%82%BF%E4%BF%82%E3%81%AB%E5%AE%9F%E8%A1%8C%E6%99%82%E9%96%93%E4%BA%88%E6%B8%AC%E3%81%AE%E3%82%BF%E3%82%B9%E3%82%AF%E3%81%8C%E8%BF%BD%E5%8A%A0">シミュレータ係に実行時間予測のタスクが追加</a></li><li><a href="#%E7%99%BA%E5%B1%95%E8%AA%B2%E9%A1%8C%E3%81%A8%E3%81%97%E3%81%A6512512%E3%81%AE%E7%94%BB%E5%83%8F%E3%82%B5%E3%82%A4%E3%82%BA%E3%81%AE%E3%83%AC%E3%82%A4%E3%83%88%E3%83%AC%E3%81%8C%E8%BF%BD%E5%8A%A0">発展課題として512×512の画像サイズのレイトレが追加</a></li></ul></li></ul><!-- tocstop --><h2><span id="全般">全般</span></h2><h4><span id="授業が対面オンラインと対面のハイブリッド型へ">授業が対面→オンラインと対面のハイブリッド型へ</span></h4><p>コンパイラ実験は完全オンラインですが，プロセッサ実験は生徒が対面，オンラインを自由に選べます．しかし，対面授業は他の班の同級生と情報交換ができる貴重な場だった<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>ので多くの人が対面で受けていました．</p><h4><span id="地下が利用不可能に">(地下が利用不可能に)</span></h4><p>去年に引き続き，地下が利用不可能となった状態で開発を行いました．<br>おそらく2022年は使えるはず…?</p><br><h2><span id="ハードウェア">ハードウェア</span></h2><h4><span id="配布されるfpgaボードの性能が低下">配布されるFPGAボードの性能が低下</span></h4><p>これは決して予算が削られたわけではなく(たぶん)，今までは班に一つ配布されていたものが一人に一つに増やされたためです<sup class="footnote-ref"><a href="#fn3" id="fnref3">[3]</a></sup>．<br>これにより以下の変更が発生します．</p><h4><span id="ddr2メモリの使用が性能的にほぼ必須に">DDR2メモリの使用が性能的にほぼ必須に</span></h4><p>以上より，FPGAのBRAMの容量が減ったため，特に工夫をしなかった場合，容量不足となります．そのため，BRAMをキャッシュとして用い，DDR2メモリをメモリとして扱うことを強いられます．後述しますが，キャッシュの開発も単位要件として追加されたので無理やりBRAMしか使わないようにすることは認められません．</p><br><h2><span id="単位要件">単位要件</span></h2><h4><span id="コンパイラ実験の課題の割り振りの変更">コンパイラ実験の課題の割り振りの変更</span></h4><p>一部の個人課題がグループ課題になる，必須提出数の増加などがありました．全体的には負担が増した気がします．</p><h4><span id="fpu係がfpuメモリ係に変更">FPU係がFPU・メモリ係に変更</span></h4><p><a href="#DDR2%E3%83%A1%E3%83%A2%E3%83%AA%E3%81%AE%E4%BD%BF%E7%94%A8%E3%81%8C%E6%80%A7%E8%83%BD%E7%9A%84%E3%81%AB%E3%81%BB%E3%81%BC%E5%BF%85%E9%A0%88%E3%81%AB">メモリの変化</a>により，FPU係にキャッシュシステムを含むメモリ開発の役割が増えました．</p><h4><span id="キャッシュの開発が必須に">キャッシュの開発が必須に</span></h4><p>前述したようにDDR2メモリの使用が必須になったため，これだけを使うと速度が著しく低下します．そのため，BRAMをキャッシュとして用いることが必須になりました．</p><h4><span id="シミュレータ係に実行時間予測のタスクが追加">シミュレータ係に実行時間予測のタスクが追加</span></h4><p>今までは動作のシミュレーションだけを行うソフトを作れば単位を確定できましたが，それに加えてハードウェアでプログラムを実行した際にかかる時間をある程度の精度で予測することも必須要件に加えられました．これにより，今までは仕事がなくなっていた学期末に仕事が入ります．</p><h4><span id="発展課題として512512の画像サイズのレイトレが追加">発展課題として512×512の画像サイズのレイトレが追加</span></h4><p>必須要件は128×128の画像のレンダリングの速度競争ですが，発展としてその4(16)倍の大きさの画像のレンダリングの速度競争が行われます．</p><br>書き洩らしがあればご一報願います．<br><hr class="footnotes-sep"><section class="footnotes"><ol class="footnotes-list"><li id="fn1" class="footnote-item"><p>プログラムで自由に回路を変更できるデバイス <a href="#fnref1" class="footnote-backref">↩︎</a></p></li><li id="fn2" class="footnote-item"><p>DiscordやSlackもありますがやっぱり対面のほうが話しやすいです <a href="#fnref2" class="footnote-backref">↩︎</a></p></li><li id="fn3" class="footnote-item"><p>完全オンラインになっても全員が手元で動作させられるようにするため <a href="#fnref3" class="footnote-backref">↩︎</a></p></li></ol></section>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;あけましておめでとうございます．&lt;br&gt;
+この記事にアクセスしてくださった方はご存じかもしれませんが，東京大学理学部情報科学科ではCPU実験という名物授業があります．どんな授業かというと，班員で役割分担をし，mincamlという言語で書かれたプログラムを動かすデバイスをFPGA&lt;sup class=&quot;footnote-ref&quot;&gt;&lt;a href=&quot;#fn1&quot; id=&quot;fnref1&quot;&gt;[1]&lt;/a&gt;&lt;/sup&gt;で1から作るという授業です．詳しい概要については先輩方が書いたブログなどにも書かれているのでそちらをご覧ください．&lt;/p&gt;
+&lt;p&gt;しかしながら，担当教員の変更と去年に引き続いて例のウイルスの影響を受け，今年から大幅に内容が変更されました．&lt;br&gt;
+これが永続的なものかはわかりませんが，記録として残しておきたいと思います．もし，後輩の方が私より前の世代の方のブログを見る際に参考にしていただければと思います．&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="大学" scheme="https://hn410.github.io/categories/%E5%A4%A7%E5%AD%A6/"/>
+    
+    
+    <category term="大学" scheme="https://hn410.github.io/tags/%E5%A4%A7%E5%AD%A6/"/>
+    
+    <category term="CPU実験" scheme="https://hn410.github.io/tags/CPU%E5%AE%9F%E9%A8%93/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>フォントを生成するGANを作った話(後編)</title>
+    <link href="https://hn410.github.io/2021/12/23/deepL/20211223/"/>
+    <id>https://hn410.github.io/2021/12/23/deepL/20211223/</id>
+    <published>2021-12-22T15:00:00.000Z</published>
+    <updated>2022-01-09T06:31:57.374Z</updated>
+    
+    <content type="html"><![CDATA[<p>2021 ISer Advent Calendar 23日目の記事です．</p><p>まだ前回の記事を読んでいない，あるいはもう忘れたという方は<a href="/2021/12/19/deepL/20211219/">前回の記事</a>を読まれることをお勧めします．</p><span id="more"></span><!-- toc --><ul><li><a href="#%E8%A8%93%E7%B7%B41">訓練１</a></li><li><a href="#%E8%A8%93%E7%B7%B42">訓練2</a></li><li><a href="#%E9%80%94%E4%B8%AD%E7%B5%90%E6%9E%9C">(途中)結果</a></li><li><a href="#%E6%84%9F%E6%83%B3">感想</a></li><li><a href="#%E5%82%99%E5%BF%98%E9%8C%B2">備忘録</a></li><li><a href="#%E4%BD%99%E8%AB%87">余談</a></li><li><a href="#%E4%BD%BF%E7%94%A8%E3%81%95%E3%81%9B%E3%81%A6%E3%81%84%E3%81%9F%E3%81%A0%E3%81%84%E3%81%9F%E3%83%95%E3%82%A9%E3%83%B3%E3%83%88">使用させていただいたフォント</a></li></ul><!-- tocstop --><h2><span id="訓練1">訓練１</span></h2><p>さて，ようやく訓練フェーズに入ったわけですが，前述のネットワークをそのまま訓練しようとすると，非常に時間がかかるので，段階的に訓練していきます．まずはモデルの低層部分である，文字の画像を次元削減し，再び文字の画像を生成する部分（いわゆるオートエンコーダ）を学習します．下図のようにGeneratorの低層部分の出力から画像を生成し，元の文字の画像と一致するように訓練させることを順に行います．</p><img src="/images/20211223/cEncoder.png" width="100%"><div style="text-align: center;font-size: 100%">  該当するモデルの図．</div> <p>ここで難しいのが，どの程度までこのモデルを訓練させるかです．変換できる文字の種類を今回学習する文字<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>に限ってしまえば，母集団＝標本となるため，過適合がなく，訓練すればするほど精度が上昇するのですが，それ以外の文字もある程度変換できるようにしたい場合は早期に切り上げる必要があります．</p><p>今回は，頻出する構造がはっきりと再現できる程度に訓練をしました．特に再現に時間がかかった構造としては，かなの半濁点，諫などの内部の点，馬へんなどのれんがの部分があります．</p><img src="/images/20211223/difficult.png" width="50%"><div style="text-align: center;font-size: 100%">  訓練途中の結果．それぞれ左側は入力，右側が出力された画像となっている．</div> <img src="/images/20211223/wt_.png" width="25%"><div style="text-align: center;font-size: 100%">  誰ですかこんな漢字を考えたのは．</div> <p>また，この訓練の損失関数は初めはL1損失を用いました．フォント画像を出力するので，ぼやけた画像よりも二値化されたような画像のほうが望ましいためこの選択をしたのですが，意外と学習が遅く，数千エポック回しても下図のような細かい構造が再現できませんでした．これをもってL2損失に切り替えたところ，100エポックほどで以下のような画像を出力しました．この時は出力にシグモイド関数を挟んでいたため，L2損失を使うと勾配消失が起きるのではないかと思っていましたが…難しいものですね．</p><img src="/images/20211223/diff.png" width="33%"><div style="text-align: center;font-size: 100%">  左から，入力，L1損失で学習した際の出力, その後L2損失で学習した際の出力．口の横棒や，髟を見ると違いが分かりやすい．</div> <h2><span id="訓練2">訓練2</span></h2><p>ようやくGANとしての訓練を始められますが，その前に．Generatorが生成した画像の分類を行うDiscriminatorを説明します．</p><p>まず，Generatorが生成した画像か変換先のフォントの画像かを判別する通常のDiscriminatorを用意します．これには前述の画像のほかに，Genarotrに入力した画像と同じ変換先のフォントの組も同時に入れます．これにより，DiscriminatorはGeneratorが作った画像かどうかというよりは，入力された画像の文字が同じフォントに属するかという判定を行います．</p><p>これに加えて，入力された画像が何の文字かを判定するCharaDiscriminatorも用意しました．これは文字の代わりにそれに対応する特徴量ベクトルを出力します．訓練はこの特徴量がGenerator内のCharaEncoderの出力と一致するように行います．</p><p>以上の分類器とともに以下の図のように2つの損失を算出し，最小化させていくことでGeneratorを訓練していきます．同時にDiscriminatorにも損失関数を用意し，訓練させています．</p><img src="/images/20211223/training.png" width="100%"><div style="text-align: center;font-size: 100%">  Generatorの訓練の様子．Generatorだけでなく2つのDiscriminatorも用意して損失を算出する．</div> <p>Generatorが出力した画像(とそのほか必要な入力)をそれぞれ分類器に入れ，Generator, 分類器ごとにそれぞれの損失関数を最小化しさせました．</p><h2><span id="途中結果">(途中)結果</span></h2><p>今のところの結果をあげておきます．</p><p>まずはうまくいっている(ように見える)例から．以下で挙げる画像は，左から，変換したい字(入力)，変換先の教師画像，Generatorの出力結果，変換したいフォントで書いた字の画像2組(入力)となっております．<br><img src="/images/20211223/valid1.png" width="50%"></p><div style="text-align: center;font-size: 100%">  validデータの変換の例．</div> この例については，教師画像とはあまり一致していないように見えますが，例えば横棒が終端が太く，それ以外は細いといった特徴は表現できているように見えます．<p>もちろんこんなにうまくいくものばかりではありません．下のようになんか背景が真っ白になっている時があったり，<br><img src="/images/20211223/valid2.png" width="50%"></p><div style="text-align: center;font-size: 100%">  validデータの変換例2．</div> ゴシック体と大きく異なるフォントは全然学習できてなかったりとなかなか課題は多そうです．<img src="/images/20211223/train.png" width="50%"><div style="text-align: center;font-size: 100%">  trainデータの変換例2．</div> <p>ほかにも，</p><ul><li>明らかに他の画像の特徴で表現されている<ul><li>→他の画像の学習結果が大きくでてしまった?</li></ul></li><li>周りに変なごみが出る(うまくいった例の画像などにも出てる)</li><li>^ , .などの小さい字が異様に膨らむ<br>などの問題があります．</li></ul><p>また，フォントの大きさの変化，回転などといった特徴は表現できないことも分かっております，これはおそらくフォントのエンコードをする部分で主にConvolutionレイヤを使っているモデルを使用していることが原因だと思いますが，特に支障をきたさなそうなのでそのまま訓練を続けようと思っております<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup>，</p><h2><span id="感想">感想</span></h2><p>とにかくGenerator, Discriminatorの訓練バランス調整が難しく，崩れた途端意味のない画像しか生成しなくなるので，苦戦させられました．その調整ができても，訓練に時間がかかるという問題があり，それを改善しようとしてバランスが崩れる… というようなイタチゴッコが続いており，つらいです．</p><p>ただ，今のところはうまくいってそうでその点は少し気が楽なので，もう少し続けてみようと思います．</p><h2><span id="備忘録">備忘録</span></h2><p>初めてのGANの訓練でつまずいたところ，気づいたところを書いておきます．</p><ul><li>Dのちょうどいい正解率がよくわからない<ul><li>50%がちょうどいい正解率らしいけど，Dが全然学習してないときとの区別ができない</li><li>とりあえず65~55%あたりにしてみる</li></ul></li><li>G, Dのバランス調整はdropout率を動かすのが早い<ul><li>Dの正解率等に応じて動的に調整できればなお楽</li></ul></li><li>人の実装はしっかりコードを読んで意味を確認してから使うこと<ul><li>自分の直感とは違う書き方がたまにされている</li><li>これで損失関数の符号が逆になったまま訓練してました()</li></ul></li><li>メモリが足りなくなったらdel; torch.cuda.empty_cache(); gc.collect()をする<ul><li>バッチサイズを大きくして訓練できる</li><li>でもこれをすると逆効果になることもある</li><li>地味に時間も食うので毎iterationやるときなどは必要がなければ使わないほうがいいかも</li></ul></li><li>勾配を伝播させる必要のないテンソルはdetach()で計算グラフから切り離す<ul><li>しなくてもバグらないけどメモリをかなり無駄遣いする</li><li>GANで必須のテクニックだと思うけど意外と解説が少ない気がする</li></ul></li><li>line_profilerやtorchinfo.summaryで時間，メモリの無駄遣いをしているところを探す</li><li>損失関数をAdamにこだわらない<ul><li>RMSPropやAdamWが意外といけるときもある</li></ul></li></ul><h2><span id="余談">余談</span></h2><p>最後に，訓練中の出力画像を表示してくれたTensorboard君の渾身の煽りを御覧ください．</p><img src="/images/20211223/gaba.png" width="50%"><div style="text-align: center;font-size: 100%">  (こ)ここガバ</div> <h2><span id="使用させていただいたフォント">使用させていただいたフォント</span></h2><ul><li><a href="https://www.lazypolarbear.com/entry/font-shirokuma">しろくまフォント</a></li><li><a href="http://zone108.main.jp/font/fz-imokenpi.html">FZイモケンピ</a></li><li><a href="https://fontgraphic.jp/fgtogebara">棘薔薇フォント</a></li><li><a href="http://kokagem.sakura.ne.jp/font/mochi/">Nuきなこもち</a></li></ul><hr class="footnotes-sep"><section class="footnotes"><ol class="footnotes-list"><li id="fn1" class="footnote-item"><p>ASCII文字，かな，JIS第一，第二水準の漢字 <a href="#fnref1" class="footnote-backref">↩︎</a></p></li><li id="fn2" class="footnote-item"><p>むしろそのような変化を吸収出来たほうが都合よい気がします(写真で撮影したものからフォントを生成したいときなど) <a href="#fnref2" class="footnote-backref">↩︎</a></p></li></ol></section>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;2021 ISer Advent Calendar 23日目の記事です．&lt;/p&gt;
+&lt;p&gt;まだ前回の記事を読んでいない，あるいはもう忘れたという方は&lt;a href=&quot;/2021/12/19/deepL/20211219/&quot;&gt;前回の記事&lt;/a&gt;を読まれることをお勧めします．&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="開発" scheme="https://hn410.github.io/categories/%E9%96%8B%E7%99%BA/"/>
+    
+    
+    <category term="GAN" scheme="https://hn410.github.io/tags/GAN/"/>
+    
+    <category term="深層学習" scheme="https://hn410.github.io/tags/%E6%B7%B1%E5%B1%A4%E5%AD%A6%E7%BF%92/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>フォントを生成するGANを作った話(前編)</title>
+    <link href="https://hn410.github.io/2021/12/19/deepL/20211219/"/>
+    <id>https://hn410.github.io/2021/12/19/deepL/20211219/</id>
+    <published>2021-12-18T15:00:00.000Z</published>
+    <updated>2022-01-09T06:28:00.404Z</updated>
+    
+    <content type="html"><![CDATA[<p>2021 ISer Advent Calendar 19日目の記事です．<br>記事が長くなりそうでかつ19日が開いていたので，内容を2つに分けてお送りします．</p><p>突然ですが，皆さんはこのような経験はありませんか？</p><span id="more"></span><p><img src="/images/20211219/soeikaku.png" alt></p><p>おお～．いかしたフォントだな～… なんのフォント使ってるんだろ？</p><br><p>………</p><br><p><img src="/images/20211219/search1.png" alt><br><img src="/images/20211219/search2.png" alt><br><img src="/images/20211219/thinking.png" alt></p><br>このように，見つけたフォントがなんのフォントか知りたいのにどう検索すればいいのかわからない…．<br><p><span style="font-size: 200%">じゃあ，自分で作ればいいじゃない!</span></p><br><p>ということで作られたのがこちらになります．</p><!-- toc --><ul><li><a href="#%E6%A6%82%E8%A6%81">概要</a></li><li><a href="#%E5%AE%9F%E8%A3%85">実装</a></li><li><a href="#%E3%83%87%E3%83%BC%E3%82%BF%E5%8F%8E%E9%9B%86%E3%83%81%E3%82%A7%E3%83%83%E3%82%AF">データ収集，チェック</a></li><li><a href="#%E6%AC%A1%E5%9B%9E%E4%BA%88%E5%91%8A%E3%81%A8%E8%BF%91%E6%B3%81">次回予告と近況</a></li><li><a href="#%E4%BD%BF%E7%94%A8%E3%81%95%E3%81%9B%E3%81%A6%E3%81%84%E3%81%9F%E3%81%A0%E3%81%84%E3%81%9F%E7%B4%A0%E6%9D%90">使用させていただいた素材</a></li></ul><!-- tocstop --><br><h2><span id="概要">概要</span></h2><p>目的のフォントで描画した画像の組を複数と，変換したい文字を入力することで，その文字を目的のフォントで描画した画像を生成するモデルを訓練するGANを作成しました．</p><img src="/images/20211219/diagram1.png" width="100%"><div style="text-align: center;font-size: 100%">  大体こんな感じ</div> <h2><span id="実装">実装</span></h2><p>Generator部分について，実際の実装をもう少し細かく見ると以下のようになっており，文字のエンコードをする部分，フォントのエンコードをする部分，それらをもとに画像を生成する部分の3つに分けられます．</p><img src="/images/20211219/diagram2.png" width="100%"><div style="text-align: center;font-size: 100%">  大体こんな感じ</div> <p>文字，フォントのエンコードをする部分では<a href="https://arxiv.org/abs/1905.11946">EfficientNet</a>という画像認識モデル<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup>を，生成する部分では<a href="https://arxiv.org/abs/1812.04948">StyleGAN</a>という画像生成モデルを用いており，この全体の構成は<a href="https://arxiv.org/abs/2008.00951">pixel2style2pixel</a>を基にしています．</p><p>これらのモデルについての説明は様々なサイトで記事にされているのでそちらに譲ります．</p><p>また，入力した画像がGeneratorが生成したものか，既存のフォントでレンダリングしたものかを判別するDiscriminatorも，EfficientNetを基にしております．</p><h2><span id="データ収集チェック">データ収集，チェック</span></h2><p>ネットワークを作ったところで早速訓練と行きたいところですが，まずはデータの収集とそのチェックがあります．画像に比べれば一枚一枚チェックしなくて言い分楽ですが，それでも検査しなければいけないことは沢山あります．<br>例えば，</p><ul><li>英数字，かな，漢字のうちどれに対応しているか(英数字だけ，かなだけ，ごく一部の文字だけに対応など，いろいろなパターンがある)<sup class="footnote-ref"><a href="#fn2" id="fnref2">[2]</a></sup></li><li>アルファベットの大文字小文字両方に対応しているか (英数字のみに対応するフォントで，小文字も大文字として表示しているフォントがたまにある)</li><li>(g, バックスラッシュなど，異なる字体が存在する文字の表記がデータセット内で統一されているか)</li></ul><p>等があります．<br>この作業を効率化させるため，<a href="https://ipywidgets.readthedocs.io/en/latest/">ipywidgets</a>というライブラリを使用しました．<br>画像のように，JupyterNotebook上でGUIを構築し，操作をすることができるので，ちょっとした作業におすすめです．<br><img src="/images/20211219/gui.png" width="100%"></p><div style="text-align: center;font-size: 100%">  実際に作成したGUI</div> <h2><span id="次回予告と近況">次回予告と近況</span></h2><p>次回は訓練についてと(途中)結果について書きます．</p><p>この記事を公開する数日前にバグが発覚したのと，改善案を思いついたということもあり，現在急いで学習のやり直しをしております．<br>果たして後編までに間に合うんでしょうか().</p><h2><span id="使用させていただいた素材">使用させていただいた素材</span></h2><ul><li>thinking-face … <a href="https://icon-icons.com/icon/thinking-face/110034">https://icon-icons.com/icon/thinking-face/110034</a></li><li>GUIのフォント … <a href="https://www.lazypolarbear.com/entry/font-shirokuma">しろくまフォント</a></li></ul><hr class="footnotes-sep"><section class="footnotes"><ol class="footnotes-list"><li id="fn1" class="footnote-item"><p>厳密にはこれにmap2styleというpSpのモデルの一部を組み合わせたネットワーク <a href="#fnref1" class="footnote-backref">↩︎</a></p></li><li id="fn2" class="footnote-item"><p>このチェックは自動化できそうに思うかもしれませんが，対応外の文字もレンダリングできてしまう上に，その結果もまちまち（何も表示されなかったり豆腐になったり）なので，実際に目視したほうが早いと思います． <a href="#fnref2" class="footnote-backref">↩︎</a></p></li></ol></section>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;2021 ISer Advent Calendar 19日目の記事です．&lt;br&gt;
+記事が長くなりそうでかつ19日が開いていたので，内容を2つに分けてお送りします．&lt;/p&gt;
+&lt;p&gt;突然ですが，皆さんはこのような経験はありませんか？&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="開発" scheme="https://hn410.github.io/categories/%E9%96%8B%E7%99%BA/"/>
+    
+    
+    <category term="GAN" scheme="https://hn410.github.io/tags/GAN/"/>
+    
+    <category term="深層学習" scheme="https://hn410.github.io/tags/%E6%B7%B1%E5%B1%A4%E5%AD%A6%E7%BF%92/"/>
+    
+  </entry>
+  
+</feed>
