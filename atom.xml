@@ -6,7 +6,7 @@
   <link href="https://hn410.github.io/atom.xml" rel="self"/>
   
   <link href="https://hn410.github.io/"/>
-  <updated>2022-05-05T14:44:30.551Z</updated>
+  <updated>2022-05-23T13:16:57.680Z</updated>
   <id>https://hn410.github.io/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Joplin (Katex)でマクロを使う</title>
+    <link href="https://hn410.github.io/2022/05/23/memo/JoplinMacro/"/>
+    <id>https://hn410.github.io/2022/05/23/memo/JoplinMacro/</id>
+    <published>2022-05-22T15:00:00.000Z</published>
+    <updated>2022-05-23T13:16:57.680Z</updated>
+    
+    <content type="html"><![CDATA[<p>最近，Joplinというマークダウンエディタを使っているのですが，<code>\newcommand{}</code>でマクロを使おうとしたところ，<code>$$</code>で囲まれた中でしか適用されなかったので困りました．どうやらこのソフトはレンダラーにKatexを使っていて，Katexの仕様上こうなることは仕方ないみたいです．</p><p>開発者はレンダラーとしてMathjaxを使う気は<a href="https://discourse.joplinapp.org/t/replace-katex-with-mathjax/2561/4">全くない</a>ようなので，対策を探しました．</p><span id="more"></span><h2><span id="対策">対策</span></h2><p><code>\gdef</code>または<code>\global \def</code>というコマンドを使えば良いらしいです(初耳だった…)．詳しくはこれらについて解説するサイトに譲りますが，例えば，</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$$\gdef \data #1{\mathcal{D_{(#1)}}}$$</span><br><span class="line"></span><br><span class="line">$\data{s}$</span><br></pre></td></tr></table></figure><p>のようにすれば<mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.355ex" xmlns="http://www.w3.org/2000/svg" width="2.682ex" height="1.901ex" role="img" focusable="false" viewbox="0 -683 1185.6 840.1"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="TeXAtom" data-mjx-texclass="ORD"><g data-mml-node="mi"><path data-c="44" d="M37 475Q19 475 19 487Q19 536 103 604T327 682H356Q386 683 408 683H419Q475 683 506 681T582 668T667 633Q766 571 766 450Q766 365 723 287T611 152T455 57T279 6Q248 1 160 0Q148 0 131 0T108 -1Q72 -1 72 11Q72 24 90 40T133 64L144 68L152 88Q247 328 272 587Q275 613 272 613Q272 613 269 613Q225 610 195 602T149 579T129 556T119 532Q118 530 116 525T113 518Q102 502 80 490T37 475ZM665 407Q665 596 412 613Q403 614 383 614Q370 614 370 612Q370 598 363 542T323 357T242 103L228 69H265Q391 73 481 119Q536 148 575 188T633 268T658 338T665 392V407Z"/></g></g><g data-mml-node="mi" transform="translate(804,-150) scale(0.707)"><path data-c="1D460" d="M131 289Q131 321 147 354T203 415T300 442Q362 442 390 415T419 355Q419 323 402 308T364 292Q351 292 340 300T328 326Q328 342 337 354T354 372T367 378Q368 378 368 379Q368 382 361 388T336 399T297 405Q249 405 227 379T204 326Q204 301 223 291T278 274T330 259Q396 230 396 163Q396 135 385 107T352 51T289 7T195 -10Q118 -10 86 19T53 87Q53 126 74 143T118 160Q133 160 146 151T160 120Q160 94 142 76T111 58Q109 57 108 57T107 55Q108 52 115 47T146 34T201 27Q237 27 263 38T301 66T318 97T323 122Q323 150 302 164T254 181T195 196T148 231Q131 256 131 289Z"/></g></g></g></g></svg></mjx-container>と表示してくれるようになります．</p><p>Katexをレンダラーにしている他のエディタでも使えそうなので一応メモしておきます．</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;最近，Joplinというマークダウンエディタを使っているのですが，&lt;code&gt;\newcommand{}&lt;/code&gt;でマクロを使おうとしたところ，&lt;code&gt;$$&lt;/code&gt;で囲まれた中でしか適用されなかったので困りました．どうやらこのソフトはレンダラーにKatexを使っていて，Katexの仕様上こうなることは仕方ないみたいです．&lt;/p&gt;
+&lt;p&gt;開発者はレンダラーとしてMathjaxを使う気は&lt;a href=&quot;https://discourse.joplinapp.org/t/replace-katex-with-mathjax/2561/4&quot;&gt;全くない&lt;/a&gt;ようなので，対策を探しました．&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="備忘録" scheme="https://hn410.github.io/categories/%E5%82%99%E5%BF%98%E9%8C%B2/"/>
+    
+    
+    <category term="Katex" scheme="https://hn410.github.io/tags/Katex/"/>
+    
+    <category term="Joplin" scheme="https://hn410.github.io/tags/Joplin/"/>
+    
+  </entry>
   
   <entry>
     <title>Markdownで表の幅を調節する方法</title>
