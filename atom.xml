@@ -6,7 +6,7 @@
   <link href="https://hn410.github.io/atom.xml" rel="self"/>
   
   <link href="https://hn410.github.io/"/>
-  <updated>2022-05-23T13:19:19.826Z</updated>
+  <updated>2022-06-15T00:42:59.614Z</updated>
   <id>https://hn410.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>MarkdownのCSSを絶対パスで参照する方法</title>
+    <link href="https://hn410.github.io/2022/06/15/memo/MarkdownCSSAbsolutePath/"/>
+    <id>https://hn410.github.io/2022/06/15/memo/MarkdownCSSAbsolutePath/</id>
+    <published>2022-06-14T15:00:00.000Z</published>
+    <updated>2022-06-15T00:42:59.614Z</updated>
+    
+    <content type="html"><![CDATA[<p>最近，Marp (Markdownでプレゼンのスライドが作れる拡張) などでMarkdownを記述する際，CSSをよく参照するようになりました．いくつか作ったCSSを定型デザインとして様々なファイルから参照したいので，絶対パスで参照したかったので，その方法をメモしておきます．</p><span id="more"></span><!-- toc --><ul><li><a href="#%E5%95%8F%E9%A1%8C">問題</a></li><li><a href="#%E8%A7%A3%E6%B1%BA%E6%89%8B%E6%B3%95">解決手法</a></li></ul><!-- tocstop --><h2><span id="問題">問題</span></h2><p><img src="/images/memo/markdown/css_0.png" alt></p><p>VSCodeの設定で&quot;Markdown: Styles&quot; (Marpの場合はMarkdown Marp:Themesも)の設定を開くと使用するCSSのパスを登録できますが，これはURLかローカルの相対パスしか指定できません (セキュリティ上の問題があるみたいです)．<br>なので，ナイーブな手法としてはワークスペースを作るごとに相対パスで設定するなどの手法があるわけですが…非常に面倒ですね．</p><h2><span id="解決手法">解決手法</span></h2><p>URLでは指定できるので，どこかしらのWeb上にCSSだけ上げてそれを参照すればよいのです (CSSがWeb上に公開されてしまうという問題はありますが…)．一番手軽なのはGithub上に公開リポジトリを作成してそこに上げてしまうというものです．</p><p>上げたファイルをGithub上で開いて右上のRawボタンを押すと，そのファイルをブラウザ上で開けるので，そこのURLをCSSとして指定すればめでたく適用できます．</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;最近，Marp (Markdownでプレゼンのスライドが作れる拡張) などでMarkdownを記述する際，CSSをよく参照するようになりました．いくつか作ったCSSを定型デザインとして様々なファイルから参照したいので，絶対パスで参照したかったので，その方法をメモしておきます．&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="備忘録" scheme="https://hn410.github.io/categories/%E5%82%99%E5%BF%98%E9%8C%B2/"/>
+    
+    
+    <category term="備忘録" scheme="https://hn410.github.io/tags/%E5%82%99%E5%BF%98%E9%8C%B2/"/>
+    
+    <category term="Markdown" scheme="https://hn410.github.io/tags/Markdown/"/>
+    
+    <category term="Marp" scheme="https://hn410.github.io/tags/Marp/"/>
+    
+    <category term="CSS" scheme="https://hn410.github.io/tags/CSS/"/>
+    
+  </entry>
   
   <entry>
     <title>Joplin (Katex)でマクロを使う</title>
