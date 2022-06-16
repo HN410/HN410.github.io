@@ -6,7 +6,7 @@
   <link href="https://hn410.github.io/atom.xml" rel="self"/>
   
   <link href="https://hn410.github.io/"/>
-  <updated>2022-06-15T00:49:05.379Z</updated>
+  <updated>2022-06-16T01:17:29.434Z</updated>
   <id>https://hn410.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Latexの数式のOCRを無料で行えるツール</title>
+    <link href="https://hn410.github.io/2022/06/16/tools/LatexOCR/"/>
+    <id>https://hn410.github.io/2022/06/16/tools/LatexOCR/</id>
+    <published>2022-06-15T15:00:00.000Z</published>
+    <updated>2022-06-16T01:17:29.434Z</updated>
+    
+    <content type="html"><![CDATA[<p>論文のメモをMarkdownでとるときなど，数式の画像をlatexの書式に変換したいことはかなり頻繁にあると思います．最近は<a href="https://mathpix.com/">Mathpix</a>という便利なツールも出てきましたが，こちらは無料版では変換できる枚数に制限があり，学生にはちょっと手を出しづらいという人もいるでしょう．</p><p>今回はなかなかの精度でそれと同様なことができるOSSを見つけたのでそれを紹介したいと思います．</p><span id="more"></span><!-- toc --><ul><li><a href="#%E6%A6%82%E8%A6%81">概要</a><ul><li><a href="#cli">CLI</a></li><li><a href="#gui">GUI</a></li></ul></li><li><a href="#%E4%BD%BF%E7%94%A8%E4%BE%8B">使用例</a></li><li><a href="#%E6%B3%A8%E6%84%8F%E7%82%B9">注意点</a></li><li><a href="#%E6%84%9F%E6%83%B3">感想</a></li></ul><!-- tocstop --><h2><span id="概要">概要</span></h2><p>今回紹介するのは，<a href="https://github.com/lukas-blecher/LaTeX-OCR">LaTeX-OCR</a>という機械学習ベースのソフトウェアです．Pythonのモジュールという形で公開しており，以下のようにpipを使ってインストールができます．</p><p><code>pip install pix2tex[gui]</code></p><p>CLIとGUIを用意しておりそれぞれ以下のように使えます．</p><h3><span id="cli">CLI</span></h3><p>画像ファイルやクリップボードの画像をLatex形式に変換できます．</p><ol><li><code>pix2tex</code>を実行し，プロンプトを表示させます．</li><li>画像ファイルを変換したい場合はそのパスを入力，クリップボードの画像を変換したい場合は何も入力せずに確定します．</li><li>Latexの書式で出力が表示されます．</li></ol><h3><span id="gui">GUI</span></h3><p>スニッピングツールを使ってGUIで画面上の数式を変換できます．</p><ol><li><code>latexocr</code>を実行し，ウィンドウを表示させます．</li><li><code>Snip</code>ボタンを押して，スニッピングツールを起動させます．ここで，変換させたい画像を矩形範囲内に収めて指定します．</li><li>しばらくすると変換されたLatexのコードとそのレンダリング結果が表示されます．</li></ol><h2><span id="使用例">使用例</span></h2><p>例えば，<a href="https://arxiv.org/abs/1802.05957">SN-GAN</a>の数式3 (下図)をこのツールで変換してみます．<br><img src="/images/tools/latexocr_0.png" alt></p><p>手打ちでやろうと思うと億劫になりそうですが，結果は以下のようになっております．xのベクトル表記がうまくいっていないのを除けばほぼ完璧な変換をしてくれます．<br><img src="/images/tools/latexocr_1.png" alt></p><p>なお，満足な変換ができない場合，下の<code>Temperature</code>を調整してから<code>Retry</code>を押すと，うまく変換できる場合もあります．</p><h2><span id="注意点">注意点</span></h2><p><code>align</code>などで数行にわたる数式などの複雑な数式，手書きの数式などはまだ対応していないようです．しかし，記事執筆現在も頻繁に更新がなされているソフトウェアなので，今後のアップデートでその辺りが修正されることは期待できます．</p><h2><span id="感想">感想</span></h2><p>OSSでここまで高精度でできるのはかなり素晴らしいことだと思います．Mathpixのほうは数回しか使ったことがないのであまり比較はできていないのですが，簡単で長い数式ならこれでも十分ではないかと思っています．</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;論文のメモをMarkdownでとるときなど，数式の画像をlatexの書式に変換したいことはかなり頻繁にあると思います．最近は&lt;a href=&quot;https://mathpix.com/&quot;&gt;Mathpix&lt;/a&gt;という便利なツールも出てきましたが，こちらは無料版では変換できる枚数に制限があり，学生にはちょっと手を出しづらいという人もいるでしょう．&lt;/p&gt;
+&lt;p&gt;今回はなかなかの精度でそれと同様なことができるOSSを見つけたのでそれを紹介したいと思います．&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="ツール" scheme="https://hn410.github.io/categories/%E3%83%84%E3%83%BC%E3%83%AB/"/>
+    
+    
+    <category term="Tex" scheme="https://hn410.github.io/tags/Tex/"/>
+    
+    <category term="ツール" scheme="https://hn410.github.io/tags/%E3%83%84%E3%83%BC%E3%83%AB/"/>
+    
+    <category term="画像処理" scheme="https://hn410.github.io/tags/%E7%94%BB%E5%83%8F%E5%87%A6%E7%90%86/"/>
+    
+  </entry>
   
   <entry>
     <title>MarkdownのCSSを絶対パスで参照する方法</title>

@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://hn410.github.io/2022/06/16/tools/LatexOCR/</loc>
+    
+    <lastmod>2022-06-16</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://hn410.github.io/2022/06/15/memo/MarkdownCSSAbsolutePath/</loc>
     
     <lastmod>2022-06-15</lastmod>
@@ -285,6 +294,20 @@
     <priority>0.2</priority>
   </url>
   
+  <url>
+    <loc>https://hn410.github.io/tags/%E3%83%84%E3%83%BC%E3%83%AB/</loc>
+    <lastmod>2022-06-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://hn410.github.io/tags/%E7%94%BB%E5%83%8F%E5%87%A6%E7%90%86/</loc>
+    <lastmod>2022-06-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
 
   
   <url>
@@ -324,6 +347,13 @@
   
   <url>
     <loc>https://hn410.github.io/categories/%E9%81%8A%E3%81%B3/</loc>
+    <lastmod>2022-06-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://hn410.github.io/categories/%E3%83%84%E3%83%BC%E3%83%AB/</loc>
     <lastmod>2022-06-16</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
